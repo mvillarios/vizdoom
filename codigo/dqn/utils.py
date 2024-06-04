@@ -1,19 +1,11 @@
 import matplotlib.pyplot as plt
 import itertools as it
 from time import time, sleep
-import threading
 import csv
 import os
 from datetime import datetime
 
 import vizdoom as vzd
-
-stop_training = False
-
-def listen_for_input():
-    global stop_training
-    input("Press Enter to stop training...\n")
-    stop_training = True
 
 
 def create_game(config_file_path, window_visible):
@@ -49,28 +41,15 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
         writer.writerow(['Episode', 'Reward'])
         file.flush()
 
-        print("Training...")
-
-        # Crear un hilo para escuchar la entrada del usuario
-        input_thread = threading.Thread(target=listen_for_input)
-        input_thread.start()
+        print("Training")
 
         for episode in range(episodes):
-
             recorded_episode = f"episode{episode}_rec.lmp"
             game.new_episode(recorded_episode)
-            
-            if stop_training:
-                print("Training stopped.")
-                break
-
+        
             state = agent.preprocess(game.get_state().screen_buffer)
             total_reward = 0
             for step in it.count():
-                if stop_training:
-                    print("Training stopped.")
-                    break
-
                 action = agent.select_action(state)
                 reward = game.make_action(actions[action], FRAME_REPEAT)
                 done = game.is_episode_finished()
@@ -107,19 +86,15 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
         # Guardar la fecha y hora de finalización
         writer.writerow(['End datetime', datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
 
-    print("Total elapsed time: %.2f minutes" % ((time() - start_time) / 60.0))
-
-
     # Eliminar los episodios
     for episode in [f"episode{episode}_rec.lmp" for episode in range(episodes) if episode != best_episode]:
         if os.path.exists(episode):
             os.remove(episode)
 
+    print("Total elapsed time: %.2f minutes" % ((time() - start_time) / 60.0))
     print("Best episode: ", best_episode)
     print("Max reward: ", max_reward)
 
-    # Esperar a que el hilo de entrada termine
-    input_thread.join()
 
 
 def play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT):
