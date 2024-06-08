@@ -62,7 +62,7 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
 
                 epsilon = agent.train()
                 if epsilon is not None:
-                    print(f"Step: {steps_count}, Epsilon: {epsilon}")
+                    #print(f"Step: {steps_count}, Epsilon: {epsilon}")
                     epsilon_values.append(epsilon)
 
                 if done:
