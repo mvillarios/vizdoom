@@ -7,8 +7,8 @@ from utils import create_game, train_agent, play_game, play_recorded_game
 # Q-learning settings
 LEARNING_RATE = 0.01
 GAMMA = 0.99 
-EPSILON = 1.0
-EPSILON_DECAY = 0.999
+EPSILON = 1
+EPSILON_DECAY = 0.99
 BUFFER_SIZE = 10000
 
 # NN learning settings
@@ -17,7 +17,7 @@ BATCH_SIZE = 40
 # Other parameters
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
-EPISODES_TO_TRAIN = 15000
+EPISODES_TO_TRAIN = 20
 EPISODES_TO_PLAY = 1
 
 # Paths Scenarios
@@ -43,9 +43,10 @@ def main():
     game = create_game(config_file_path, window_visible)
     n = game.get_available_buttons_size()
     actions = [list(a) for a in it.product([0, 1], repeat=n)]
+    #print(len(actions))
 
     agent = DQNAgent(
-        input_shape=(3, RESOLUTION[0], RESOLUTION[1]),
+        input_shape=(3, *RESOLUTION),
         num_actions=len(actions),
         lr=LEARNING_RATE,
         gamma=GAMMA,
@@ -64,7 +65,7 @@ def main():
 
     if play_recorded:
         # obtener el archivo que termine en .lmp
-        play_recorded_game(game, "episode3230_rec.lmp")
+        play_recorded_game(game, "episode14561_rec.lmp")
 
     if play:
         play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT)

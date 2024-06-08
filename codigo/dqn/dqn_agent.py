@@ -48,8 +48,13 @@ class DQNAgent:
 
     def preprocess(self, img):
         img = skimage.transform.resize(img, (self.input_shape[1], self.input_shape[2]))
-        img = np.stack((img,)*3, axis=-1)
-        img = np.moveaxis(img, 2, 0)
+        # if len(img.shape) == 2:
+        #     img = np.stack((img,)*3, axis=-1)
+        # elif img.shape[2] == 1:
+        #     img = np.concatenate((img, img, img), axis=2)
+        #if len(img.shape) == 2:  # Si la imagen es en escala de grises
+        img = skimage.color.gray2rgb(img)
+        img = np.moveaxis(img, -1, 0)
         img = img.astype(np.float32)
         return img
 
@@ -58,7 +63,8 @@ class DQNAgent:
             return random.randrange(self.num_actions)
         else:
             state = torch.tensor(state, dtype=torch.float32).to(self.model.device)
-            state = state.unsqueeze(0)
+            state = torch.unsqueeze(state, 0)
+            #print("State shape: ", state.shape)
             with torch.no_grad():
                 return self.model(state).max(1)[1].view(1, 1).item()
 
@@ -67,7 +73,7 @@ class DQNAgent:
 
     def train(self):
         if len(self.memory) < self.batch_size:
-            return
+            return None, None
         transitions = self.memory.sample(self.batch_size)
         batch = self.memory.Transition(*zip(*transitions))
 
@@ -92,6 +98,8 @@ class DQNAgent:
         self.optimizer.step()
 
         self.epsilon = max(self.epsilon * self.epsilon_decay, 0.1)
+
+        return loss, self.epsilon
 
     def save_model(self):
         torch.save(self.model.state_dict(), self.model_savefile)

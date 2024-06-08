@@ -13,7 +13,7 @@ def create_game(config_file_path, window_visible):
     game = vzd.DoomGame()
     game.load_config(config_file_path)
     game.set_window_visible(window_visible)
-    game.set_mode(vzd.Mode.PLAYER)
+    game.set_mode(vzd.Mode.ASYNC_PLAYER if window_visible else vzd.Mode.PLAYER)
     game.set_screen_format(vzd.ScreenFormat.GRAY8)
     game.set_screen_resolution(vzd.ScreenResolution.RES_640X480)
     game.init()
@@ -26,13 +26,11 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
     start_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     episodes = EPISODES_TO_TRAIN
     episode_rewards = []
+    episode_losses = []
+    epsilon_values = []
     max_reward = float('-inf')
     best_episode = -1
-
-    fig, ax = plt.subplots()
-    ax.set_xlabel('Episode')
-    ax.set_ylabel('Reward')
-    line, = ax.plot([], [])
+    steps_count = 0
 
     # Abrir el archivo CSV para escribir
     with open(f'{scenario}.csv', mode='w', newline='') as file:
@@ -48,7 +46,9 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
             game.new_episode(recorded_episode)
         
             state = agent.preprocess(game.get_state().screen_buffer)
+
             total_reward = 0
+            total_loss = 0
             for step in it.count():
                 action = agent.select_action(state)
                 reward = game.make_action(actions[action], FRAME_REPEAT)
@@ -57,18 +57,22 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
                 next_state = agent.preprocess(game.get_state().screen_buffer) if not done else None
                 agent.remember(state, action, next_state, reward)
                 state = next_state
+                steps_count += 1
 
-                agent.train()
+                loss, epsilon = agent.train()
+                epsilon_values.append(epsilon)
+
+                if loss is not None:
+                    total_loss += loss.item()
 
                 if done:
                     episode_rewards.append(total_reward)
-                    #print(f"Episode: {episode}, Reward: {total_reward}")
+                    episode_losses.append(total_loss)
 
                     writer.writerow([episode, total_reward])
                     file.flush()
                     break
 
-            # Si la recompensa es la máxima, guardar el episodio
             if total_reward >= max_reward:
                 max_reward = total_reward
                 best_episode = episode
@@ -76,26 +80,33 @@ def train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, F
             if save_model:
                 agent.save_model()
 
-            # Actualizar el gráfico
-            line.set_xdata(range(len(episode_rewards)))
-            line.set_ydata(episode_rewards)
-            ax.relim()
-            ax.autoscale_view()
-            plt.savefig(f"{scenario}.png")
-
-        # Guardar la fecha y hora de finalización
+        # Escribir la fecha y hora de finalización en el archivo CSV
         writer.writerow(['End datetime', datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
 
-    # Eliminar los episodios
+    # Eliminar los archivos de episodios que no son el mejor
     for episode in [f"episode{episode}_rec.lmp" for episode in range(episodes) if episode != best_episode]:
         if os.path.exists(episode):
             os.remove(episode)
 
+    # Graficar y guardar cada serie de datos en una imagen separada
+    plot_and_save(f'{scenario}_reward.png', 'Episode', 'Reward', episode_rewards)
+    plot_and_save(f'{scenario}_loss.png', 'Episode', 'Loss', episode_losses)
+    plot_and_save(f'{scenario}_epsilon.png', 'Step', 'Epsilon', epsilon_values)
+
+    # Imprimir el tiempo total transcurrido, el mejor episodio y la máxima recompensa
     print("Total elapsed time: %.2f minutes" % ((time() - start_time) / 60.0))
     print("Best episode: ", best_episode)
     print("Max reward: ", max_reward)
+    print("Steps count: ", steps_count)
 
-
+def plot_and_save(filename, xlabel, ylabel, data):
+    plt.figure(figsize=(12, 8))
+    plt.plot(range(len(data)), data)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.xticks(range(len(data)), [int(x) for x in range(len(data))])
+    plt.savefig(filename)
+    plt.close()
 
 def play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT):
 

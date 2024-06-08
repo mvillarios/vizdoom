@@ -3,25 +3,16 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-# Elegir device
-device = None
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-    print("Using GPU")
-else:
-    device = torch.device("cpu")
-    print("Using CPU")
-
 class DQN(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(DQN, self).__init__()
-        self.device = device
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.conv1 = nn.Conv2d(state_dim[0], 32, kernel_size=7, stride=1).to(self.device)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2).to(self.device)
         self.conv2 = nn.Conv2d(32, 32, kernel_size=4, stride=1).to(self.device)
         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2).to(self.device)
-        fc_input_dims = self.conv_output_dims(state_dim)
-        self.fc1 = nn.Linear(fc_input_dims, 800).to(self.device)
+        self.fc_input_dims = self.conv_output_dims(state_dim)
+        self.fc1 = nn.Linear(self.fc_input_dims, 800).to(self.device)
         self.fc2 = nn.Linear(800, action_dim).to(self.device)
 
     def forward(self, x):
@@ -35,8 +26,8 @@ class DQN(nn.Module):
         return x
     
     def conv_output_dims(self, input_dims):
-        state = torch.zeros(1, *input_dims).to(self.device)
-        dims = self.conv1(state)
+        test_input = torch.zeros(1, *input_dims).to(self.device)
+        dims = self.conv1(test_input)
         dims = self.pool1(dims)
         dims = self.conv2(dims)
         dims = self.pool2(dims)
