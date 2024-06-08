@@ -7,9 +7,12 @@ from utils import create_game, train_agent, play_game, play_recorded_game
 # Q-learning settings
 LEARNING_RATE = 0.01
 GAMMA = 0.99 
-EPSILON = 1
-EPSILON_DECAY = 0.99
 BUFFER_SIZE = 10000
+EPSILON = 1.0
+EPSILON_DECAY = 0.99
+EPSILON_DECAY_START = 100000
+EPSILON_DECAY_END = 200000
+EPSILON_MIN = 0.1
 
 # NN learning settings
 BATCH_SIZE = 40
@@ -18,6 +21,7 @@ BATCH_SIZE = 40
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
 EPISODES_TO_TRAIN = 20
+STEPS_TO_TRAIN = 600000
 EPISODES_TO_PLAY = 1
 
 # Paths Scenarios
@@ -43,7 +47,6 @@ def main():
     game = create_game(config_file_path, window_visible)
     n = game.get_available_buttons_size()
     actions = [list(a) for a in it.product([0, 1], repeat=n)]
-    #print(len(actions))
 
     agent = DQNAgent(
         input_shape=(3, *RESOLUTION),
@@ -52,6 +55,9 @@ def main():
         gamma=GAMMA,
         epsilon=EPSILON,
         epsilon_decay=EPSILON_DECAY,
+        epsilon_min=EPSILON_MIN,
+        epsilon_decay_start=EPSILON_DECAY_START,
+        epsilon_decay_end=EPSILON_DECAY_END,
         buffer_size=BUFFER_SIZE,
         batch_size=BATCH_SIZE,
         model_savefile=model_savefile
@@ -61,7 +67,7 @@ def main():
         agent.load_model()
 
     if train:
-        train_agent(game, agent, actions, scenario, save_model, EPISODES_TO_TRAIN, FRAME_REPEAT)
+        train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT)
 
     if play_recorded:
         # obtener el archivo que termine en .lmp

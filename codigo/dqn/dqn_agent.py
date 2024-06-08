@@ -29,10 +29,13 @@ class DQNAgent:
         lr, 
         gamma, 
         epsilon, 
-        epsilon_decay, 
+        epsilon_decay, # Decaimiento del epsilon
+        epsilon_min, # Epsilon mínimo
+        epsilon_decay_start, # Pasos para que empiece a decaer el epsilon
+        epsilon_decay_end, # Pasos para que termine de decaer el epsilon
         buffer_size, 
         batch_size,
-        model_savefile
+        model_savefile,
     ):
         self.input_shape = input_shape
         self.num_actions = num_actions
@@ -40,19 +43,18 @@ class DQNAgent:
         self.gamma = gamma
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay_start = epsilon_decay_start
+        self.epsilon_decay_end = epsilon_decay_end
         self.memory = ReplayMemory(buffer_size)
         self.model = DQN(input_shape, num_actions)
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
         self.batch_size = batch_size
         self.model_savefile = model_savefile
+        self.steps = 0
 
     def preprocess(self, img):
         img = skimage.transform.resize(img, (self.input_shape[1], self.input_shape[2]))
-        # if len(img.shape) == 2:
-        #     img = np.stack((img,)*3, axis=-1)
-        # elif img.shape[2] == 1:
-        #     img = np.concatenate((img, img, img), axis=2)
-        #if len(img.shape) == 2:  # Si la imagen es en escala de grises
         img = skimage.color.gray2rgb(img)
         img = np.moveaxis(img, -1, 0)
         img = img.astype(np.float32)
@@ -64,7 +66,6 @@ class DQNAgent:
         else:
             state = torch.tensor(state, dtype=torch.float32).to(self.model.device)
             state = torch.unsqueeze(state, 0)
-            #print("State shape: ", state.shape)
             with torch.no_grad():
                 return self.model(state).max(1)[1].view(1, 1).item()
 
@@ -73,7 +74,7 @@ class DQNAgent:
 
     def train(self):
         if len(self.memory) < self.batch_size:
-            return None, None
+            return None
         transitions = self.memory.sample(self.batch_size)
         batch = self.memory.Transition(*zip(*transitions))
 
@@ -91,15 +92,19 @@ class DQNAgent:
         expected_state_action_values = reward_batch + (self.gamma * next_state_values)
 
         loss = F.mse_loss(state_action_values, expected_state_action_values.unsqueeze(1))
-        #loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
 
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
-        self.epsilon = max(self.epsilon * self.epsilon_decay, 0.1)
+        self.steps += 1
 
-        return loss, self.epsilon
+        if self.steps >= self.epsilon_decay_start:
+            decay_steps = self.steps - self.epsilon_decay_start
+            total_decay_steps = self.epsilon_decay_end - self.epsilon_decay_start
+            self.epsilon = max(self.epsilon_min, self.epsilon - decay_steps * ((self.epsilon - self.epsilon_min) / total_decay_steps))
+
+        return self.epsilon
 
     def save_model(self):
         torch.save(self.model.state_dict(), self.model_savefile)
