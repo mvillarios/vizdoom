@@ -9,9 +9,8 @@ LEARNING_RATE = 0.01
 GAMMA = 0.99 
 BUFFER_SIZE = 10000
 EPSILON = 1.0
-EPSILON_DECAY = 0.99
-EPSILON_DECAY_START = 100000
-EPSILON_DECAY_END = 200000
+EPSILON_DECAY_START = 1e5
+EPSILON_DECAY_END = 2e5
 EPSILON_MIN = 0.1
 
 # NN learning settings
@@ -21,7 +20,7 @@ BATCH_SIZE = 40
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
 EPISODES_TO_TRAIN = 20
-STEPS_TO_TRAIN = 600000
+STEPS_TO_TRAIN = 6e5
 EPISODES_TO_PLAY = 1
 
 # Paths Scenarios
@@ -53,8 +52,7 @@ def main():
         num_actions=len(actions),
         lr=LEARNING_RATE,
         gamma=GAMMA,
-        epsilon=EPSILON,
-        epsilon_decay=EPSILON_DECAY,
+        epsilon_start=EPSILON,
         epsilon_min=EPSILON_MIN,
         epsilon_decay_start=EPSILON_DECAY_START,
         epsilon_decay_end=EPSILON_DECAY_END,

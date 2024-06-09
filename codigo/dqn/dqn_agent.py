@@ -28,11 +28,10 @@ class DQNAgent:
         num_actions, 
         lr, 
         gamma, 
-        epsilon, 
-        epsilon_decay, # Decaimiento del epsilon
-        epsilon_min, # Epsilon mínimo
-        epsilon_decay_start, # Pasos para que empiece a decaer el epsilon
-        epsilon_decay_end, # Pasos para que termine de decaer el epsilon
+        epsilon_start, 
+        epsilon_min, 
+        epsilon_decay_start, 
+        epsilon_decay_end, 
         buffer_size, 
         batch_size,
         model_savefile,
@@ -41,8 +40,8 @@ class DQNAgent:
         self.num_actions = num_actions
         self.lr = lr
         self.gamma = gamma
-        self.epsilon = epsilon
-        self.epsilon_decay = epsilon_decay
+        self.epsilon = epsilon_start
+        self.epsilon_start = epsilon_start
         self.epsilon_min = epsilon_min
         self.epsilon_decay_start = epsilon_decay_start
         self.epsilon_decay_end = epsilon_decay_end
@@ -61,7 +60,7 @@ class DQNAgent:
         return img
 
     def select_action(self, state):
-        if random.random() < self.epsilon:
+        if random.random() < self.epsilon_start:
             return random.randrange(self.num_actions)
         else:
             state = torch.tensor(state, dtype=torch.float32).to(self.model.device)
@@ -99,12 +98,15 @@ class DQNAgent:
 
         self.steps += 1
 
-        if self.steps >= self.epsilon_decay_start:
-            decay_steps = self.steps - self.epsilon_decay_start
-            total_decay_steps = self.epsilon_decay_end - self.epsilon_decay_start
-            self.epsilon = max(self.epsilon_min, self.epsilon - decay_steps * ((self.epsilon - self.epsilon_min) / total_decay_steps))
+        if self.epsilon_decay_start <= self.steps <= self.epsilon_decay_end:
+            decay = self.epsilon / (self.epsilon_decay_end - self.epsilon_decay_start)
+            self.epsilon_start = max(self.epsilon_min, self.epsilon_start - decay)
+            # decay_factor = (self.epsilon_start - self.epsilon_min) / (self.epsilon_decay_end - self.epsilon_decay_start)
+            # self.epsilon_start = max(self.epsilon_min, self.epsilon_start - decay_factor)
+            # decay_factor = np.exp(-0.005 * (self.steps - self.epsilon_decay_start))
+            # self.epsilon_start = max(self.epsilon_min, self.epsilon_start * decay_factor)
 
-        return self.epsilon
+        return self.epsilon_start
 
     def save_model(self):
         torch.save(self.model.state_dict(), self.model_savefile)

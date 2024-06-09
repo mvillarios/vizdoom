@@ -62,7 +62,7 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
 
                 epsilon = agent.train()
                 if epsilon is not None:
-                    #print(f"Step: {steps_count}, Epsilon: {epsilon}")
+                    print(f"Step: {steps_count}, Epsilon: {epsilon}")
                     epsilon_values.append(epsilon)
 
                 if done:
@@ -106,7 +106,6 @@ def plot_and_save(filename, xlabel, ylabel, data, x_values=None):
     plt.plot(x_values, data)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.xticks(np.arange(min(x_values), max(x_values) + 1, max(1, (max(x_values) - min(x_values)) // 10)))
     plt.savefig(filename)
     plt.close()
 
