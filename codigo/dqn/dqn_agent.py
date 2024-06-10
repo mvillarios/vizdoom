@@ -106,10 +106,11 @@ class DQNAgent:
 
         self.steps += 1
 
-        if self.epsilon_decay_start <= self.steps <= self.epsilon_decay_end:
-            self.epsilon = self.epsilon_start - (self.epsilon_start - self.epsilon_min) * (self.steps - self.epsilon_decay_start) / (self.epsilon_decay_end - self.epsilon_decay_start)
-        elif self.steps > self.epsilon_decay_end:
-            self.epsilon = self.epsilon_min
+        if self.steps >= self.epsilon_decay_start:
+            decay_steps = self.steps - self.epsilon_decay_start
+            total_decay_steps = self.epsilon_decay_end - self.epsilon_decay_start
+            decay_factor = np.exp(-decay_steps / total_decay_steps)
+            self.epsilon = self.epsilon_min + (self.epsilon_start - self.epsilon_min) * decay_factor
 
         return self.epsilon
 
@@ -121,14 +122,6 @@ class DQNAgent:
         self.model.eval()
 
         # if self.epsilon_decay_start <= self.steps <= self.epsilon_decay_end:
-        #     decay = self.epsilon / (self.epsilon_decay_end - self.epsilon_decay_start)
-        #     self.epsilon_start = max(self.epsilon_min, self.epsilon_start - decay)
-        #     # decay_factor = (self.epsilon_start - self.epsilon_min) / (self.epsilon_decay_end - self.epsilon_decay_start)
-        #     # self.epsilon_start = max(self.epsilon_min, self.epsilon_start - decay_factor)
-        #     # decay_factor = np.exp(-0.005 * (self.steps - self.epsilon_decay_start))
-        #     # self.epsilon_start = max(self.epsilon_min, self.epsilon_start * decay_factor)
-
-                # if self.epsilon_decay_start <= self.steps <= self.epsilon_decay_end:
-        #     self.epsilon = self.epsilon_min + (self.epsilon_start - self.epsilon_min) * np.exp(-self.kappa * (self.steps - self.epsilon_decay_start))
+        #     self.epsilon = self.epsilon_start - (self.epsilon_start - self.epsilon_min) * (self.steps - self.epsilon_decay_start) / (self.epsilon_decay_end - self.epsilon_decay_start)
         # elif self.steps > self.epsilon_decay_end:
         #     self.epsilon = self.epsilon_min

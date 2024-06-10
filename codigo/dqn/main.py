@@ -9,8 +9,8 @@ LEARNING_RATE = 0.01
 GAMMA = 0.99 
 BUFFER_SIZE = 10000
 EPSILON = 1.0
-EPSILON_DECAY_START = 100000
-EPSILON_DECAY_END = 200000
+EPSILON_DECAY_START = 1e5 * 2
+EPSILON_DECAY_END = 2e5 * 2
 EPSILON_MIN = 0.1
 
 # NN learning settings
@@ -20,7 +20,7 @@ BATCH_SIZE = 40
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
 EPISODES_TO_TRAIN = 20
-STEPS_TO_TRAIN = 600000
+STEPS_TO_TRAIN = 6e5 * 2
 EPISODES_TO_PLAY = 100
 
 # Paths Scenarios
@@ -29,8 +29,8 @@ config_file_path = os.path.join(vzd.scenarios_path, f"{scenario}.cfg")
 model_savefile = os.path.join(os.path.dirname(__file__), "..", "models", f"{scenario}.pth")
 
 # Flags
-save_model = False
-load_model = True
+save_model = True
+load_model = False
 
 # config
 config = [True, False, False, False] # Train config
@@ -65,7 +65,7 @@ def main():
         agent.load_model()
 
     if train:
-        train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT)
+        train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT, EPSILON_DECAY_START, EPSILON_DECAY_END)
 
     if play_recorded:
         # obtener el archivo que termine en .lmp
@@ -78,3 +78,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -20,7 +20,7 @@ def create_game(config_file_path, window_visible):
     print("Game created.")
     return game
 
-def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT):
+def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT, start_decay_steps, end_decay_steps):
     start_time = time()
     start_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     max_steps = STEPS_TO_TRAIN
@@ -30,6 +30,7 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
     epsilon_values = []
     max_reward = float('-inf')
     best_episode = -1
+    episodes_to_save= []
 
     # Abrir el archivo CSV para escribir
     with open(f'{scenario}.csv', mode='w', newline='') as file:
@@ -61,12 +62,13 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
 
                 epsilon = agent.train()
                 if epsilon is not None:
-                    #print(f"Step: {steps_count}, Epsilon: {epsilon}")
-                    epsilon_values.append(epsilon)
+                    epsilon_values.append((steps_count, epsilon))
+
+                if steps_count == start_decay_steps or steps_count == end_decay_steps:
+                    episodes_to_save.append(episode_count)
 
                 if done:
                     episode_rewards.append(total_reward)
-
                     writer.writerow([episode_count, total_reward])
                     file.flush()
                     break
@@ -82,20 +84,51 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
         # Escribir la fecha y hora de finalización en el archivo CSV
         writer.writerow(['End datetime', datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
     
-    # Eliminar los archivos de episodios que no son el mejor
-    for episode in [f"episode{ep}_rec.lmp" for ep in range(episode_count) if ep != best_episode]:
-        if os.path.exists(episode):
-            os.remove(episode)
+    episodes_to_save.append(best_episode)
+    # Eliminar los episodios grabados
+    for episode in range(episode_count):
+        if episode not in episodes_to_save:
+            file = f"episode{episode}_rec.lmp"
+            if os.path.exists(file):
+                os.remove(file)
 
-    # Graficar y guardar cada serie de datos en una imagen separada
-    plot_and_save(f'{scenario}_reward.png', 'Episode', 'Reward', episode_rewards)
-    plot_and_save(f'{scenario}_epsilon.png', 'Step', 'Epsilon', epsilon_values)
+    # Graficar el epsilon, las recompensas y las recompensas suavizadas en el mismo gráfico
+    smoothed_rewards = smooth_rewards(episode_rewards, window_size=10)
+    plot_rewards_epsilon_and_smoothed(f'{scenario}.png', episode_rewards, epsilon_values, smoothed_rewards, steps_count)
 
     # Imprimir el tiempo total transcurrido, el mejor episodio y la máxima recompensa
     print("Total elapsed time: %.2f minutes" % ((time() - start_time) / 60.0))
     print("Best episode: ", best_episode)
     print("Max reward: ", max_reward)
+    print("Average reward: ", np.mean(episode_rewards))
     print("Steps count: ", steps_count)
+
+def plot_rewards_epsilon_and_smoothed(filename, rewards, epsilon_values, smoothed_rewards, steps_count):
+    fig, ax1 = plt.subplots()
+
+    color = 'tab:blue'
+    ax1.set_xlabel('Episode')
+    ax1.set_ylabel('Reward', color=color)
+    ax1.plot(range(len(rewards)), rewards, color=color, label='Reward')
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:red', linestyle='--', label='Smoothed Reward')
+
+    ax2 = ax1.twinx()
+    color = 'tab:green'
+    ax2.set_ylabel('Epsilon', color=color)
+    epsilon_steps, epsilon_vals = zip(*epsilon_values)
+    normalized_steps = [step / steps_count * len(rewards) for step in epsilon_steps]
+    ax2.plot(normalized_steps, epsilon_vals, color=color, label='Epsilon')
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    fig.tight_layout()
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    plt.savefig(filename)
+    plt.close()
+
+def smooth_rewards(rewards, window_size):
+    return np.convolve(rewards, np.ones(window_size)/window_size, mode='valid')
 
 def plot_and_save(filename, xlabel, ylabel, data, x_values=None):
     plt.figure()
