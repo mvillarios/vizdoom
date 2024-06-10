@@ -46,11 +46,10 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
         
             state = agent.preprocess(game.get_state().screen_buffer)
             total_reward = 0
-
             for step in it.count():
                 if steps_count >= max_steps:
                     break
-
+        
                 action = agent.select_action(state)
                 reward = game.make_action(actions[action], FRAME_REPEAT)
                 done = game.is_episode_finished()
@@ -62,7 +61,7 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
 
                 epsilon = agent.train()
                 if epsilon is not None:
-                    print(f"Step: {steps_count}, Epsilon: {epsilon}")
+                    #print(f"Step: {steps_count}, Epsilon: {epsilon}")
                     epsilon_values.append(epsilon)
 
                 if done:
@@ -71,7 +70,6 @@ def train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAM
                     writer.writerow([episode_count, total_reward])
                     file.flush()
                     break
-
             if total_reward >= max_reward:
                 max_reward = total_reward
                 best_episode = episode_count
