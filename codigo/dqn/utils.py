@@ -111,10 +111,10 @@ def plot_rewards_epsilon_and_smoothed(filename, rewards, epsilon_values, smoothe
     ax1.set_ylabel('Reward', color=color)
     ax1.plot(range(len(rewards)), rewards, color=color, label='Reward')
     ax1.tick_params(axis='y', labelcolor=color)
-    ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:red', linestyle='--', label='Smoothed Reward')
+    ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:orange', linestyle='--', label='Smoothed Reward')
 
     ax2 = ax1.twinx()
-    color = 'tab:green'
+    color = 'tab:red'
     ax2.set_ylabel('Epsilon', color=color)
     epsilon_steps, epsilon_vals = zip(*epsilon_values)
     normalized_steps = [step / steps_count * len(rewards) for step in epsilon_steps]
@@ -122,8 +122,11 @@ def plot_rewards_epsilon_and_smoothed(filename, rewards, epsilon_values, smoothe
     ax2.tick_params(axis='y', labelcolor=color)
 
     fig.tight_layout()
-    ax1.legend(loc='upper left')
-    ax2.legend(loc='upper right')
+    # Combinar las leyendas de ambos ejes
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines + lines2, labels + labels2, loc='upper right')
+
     plt.savefig(filename)
     plt.close()
 

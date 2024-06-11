@@ -9,8 +9,8 @@ LEARNING_RATE = 0.01
 GAMMA = 0.99 
 BUFFER_SIZE = 10000
 EPSILON = 1.0
-EPSILON_DECAY_START = 1e5 * 2
-EPSILON_DECAY_END = 2e5 * 2
+EPSILON_DECAY_START = 3e5
+EPSILON_DECAY_END = 8e5
 EPSILON_MIN = 0.1
 
 # NN learning settings
@@ -20,7 +20,7 @@ BATCH_SIZE = 40
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
 EPISODES_TO_TRAIN = 20
-STEPS_TO_TRAIN = 6e5 * 2
+STEPS_TO_TRAIN = 14e5
 EPISODES_TO_PLAY = 100
 
 # Paths Scenarios
@@ -69,7 +69,7 @@ def main():
 
     if play_recorded:
         # obtener el archivo que termine en .lmp
-        play_recorded_game(game, "episode4470_rec.lmp")
+        play_recorded_game(game, "episode5963_rec.lmp")
 
     if play:
         play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT)
