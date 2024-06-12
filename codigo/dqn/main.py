@@ -10,7 +10,7 @@ GAMMA = 0.99
 BUFFER_SIZE = 10000
 EPSILON = 1.0
 EPSILON_DECAY_START = 3e5
-EPSILON_DECAY_END = 5e5
+EPSILON_DECAY_END = 6e5
 EPSILON_MIN = 0.1
 
 # NN learning settings
@@ -24,18 +24,18 @@ STEPS_TO_TRAIN = 12e5
 EPISODES_TO_PLAY = 100
 
 # Paths Scenarios
-scenario = 'defend_the_line'
+scenario = 'defend_the_center'
 config_file_path = os.path.join(vzd.scenarios_path, f"{scenario}.cfg")
 model_savefile = os.path.join(os.path.dirname(__file__), "..", "models", f"{scenario}.pth")
 
 # Flags
-save_model = False
-load_model = True
+save_model = True
+load_model = False
 
 # config
-#config = [True, False, False, False] # Train config
+config = [True, False, False, False] # Train config
 #config = [False, True, False, True] # Play config
-config = [False, False, True, True] # Play recorded config
+#config = [False, False, True, True] # Play recorded config
 
 train = config[0]
 play = config[1]
