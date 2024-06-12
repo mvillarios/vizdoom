@@ -20,22 +20,22 @@ BATCH_SIZE = 40
 FRAME_REPEAT = 4
 RESOLUTION = (60, 45)
 EPISODES_TO_TRAIN = 20
-STEPS_TO_TRAIN = 14e5
+STEPS_TO_TRAIN = 12e5
 EPISODES_TO_PLAY = 100
 
 # Paths Scenarios
-scenario = 'defend_the_center'
+scenario = 'defend_the_line'
 config_file_path = os.path.join(vzd.scenarios_path, f"{scenario}.cfg")
 model_savefile = os.path.join(os.path.dirname(__file__), "..", "models", f"{scenario}.pth")
 
 # Flags
-save_model = True
-load_model = False
+save_model = False
+load_model = True
 
 # config
-config = [True, False, False, False] # Train config
+#config = [True, False, False, False] # Train config
 #config = [False, True, False, True] # Play config
-#config = [False, False, True, True] # Play recorded config
+config = [False, False, True, True] # Play recorded config
 
 train = config[0]
 play = config[1]
@@ -69,7 +69,7 @@ def main():
 
     if play_recorded:
         # obtener el archivo que termine en .lmp
-        play_recorded_game(game, "episode5963_rec.lmp")
+        play_recorded_game(game, "episode2782_rec.lmp")
 
     if play:
         play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT)
