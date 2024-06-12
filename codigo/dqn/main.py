@@ -47,6 +47,18 @@ def main():
     n = game.get_available_buttons_size()
     actions = [list(a) for a in it.product([0, 1], repeat=n)]
 
+    # Print parameters
+    print("Parameters:")
+    print(f"Learning rate: {LEARNING_RATE}")
+    print(f"Gamma: {GAMMA}")
+    print(f"Buffer size: {BUFFER_SIZE}")
+    print(f"Epsilon: {EPSILON}")
+    print(f"Epsilon decay start: {EPSILON_DECAY_START}")
+    print(f"Epsilon decay end: {EPSILON_DECAY_END}")
+    print(f"Epsilon min: {EPSILON_MIN}")
+    print(f"Batch size: {BATCH_SIZE}")
+    print(f"Stept to tain: {STEPS_TO_TRAIN}")
+
     agent = DQNAgent(
         input_shape=(3, *RESOLUTION),
         num_actions=len(actions),
