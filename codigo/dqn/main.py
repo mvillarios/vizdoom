@@ -29,13 +29,13 @@ config_file_path = os.path.join(vzd.scenarios_path, f"{scenario}.cfg")
 model_savefile = os.path.join(os.path.dirname(__file__), "..", "models", f"{scenario}.pth")
 
 # Flags
-save_model = True
+save_model = False
 load_model = False
 
 # config
-config = [True, False, False, False] # Train config
+#config = [True, False, False, False] # Train config
 #config = [False, True, False, True] # Play config
-#config = [False, False, True, True] # Play recorded config
+config = [False, False, True, True] # Play recorded config
 
 train = config[0]
 play = config[1]
@@ -46,18 +46,6 @@ def main():
     game = create_game(config_file_path, window_visible)
     n = game.get_available_buttons_size()
     actions = [list(a) for a in it.product([0, 1], repeat=n)]
-
-    # Print parameters
-    print("Parameters:")
-    print(f"Learning rate: {LEARNING_RATE}")
-    print(f"Gamma: {GAMMA}")
-    print(f"Buffer size: {BUFFER_SIZE}")
-    print(f"Epsilon: {EPSILON}")
-    print(f"Epsilon decay start: {EPSILON_DECAY_START}")
-    print(f"Epsilon decay end: {EPSILON_DECAY_END}")
-    print(f"Epsilon min: {EPSILON_MIN}")
-    print(f"Batch size: {BATCH_SIZE}")
-    print(f"Stept to tain: {STEPS_TO_TRAIN}")
 
     agent = DQNAgent(
         input_shape=(3, *RESOLUTION),
@@ -77,11 +65,27 @@ def main():
         agent.load_model()
 
     if train:
+        # Print parameters
+        print("Parameters:")
+        print(f"Learning rate: {LEARNING_RATE}")
+        print(f"Gamma: {GAMMA}")
+        print(f"Buffer size: {BUFFER_SIZE}")
+        print(f"Epsilon: {EPSILON}")
+        print(f"Epsilon decay start: {EPSILON_DECAY_START}")
+        print(f"Epsilon decay end: {EPSILON_DECAY_END}")
+        print(f"Epsilon min: {EPSILON_MIN}")
+        print(f"Batch size: {BATCH_SIZE}")
+        print(f"Stept to tain: {STEPS_TO_TRAIN}")
         train_agent(game, agent, actions, scenario, save_model, STEPS_TO_TRAIN, FRAME_REPEAT, EPSILON_DECAY_START, EPSILON_DECAY_END)
 
     if play_recorded:
-        # obtener el archivo que termine en .lmp
-        play_recorded_game(game, "episode2782_rec.lmp")
+        directorio = "graficos/12-06/12-06-1"
+        files = os.listdir(directorio)
+        lmp_files = [file for file in files if file.endswith(".lmp")]
+        for lmp_file in lmp_files:
+            print(f"Playing {lmp_file}")
+            path = os.path.join(directorio, lmp_file)
+            play_recorded_game(game, path)
 
     if play:
         play_game(game, agent, actions, EPISODES_TO_PLAY, FRAME_REPEAT)
