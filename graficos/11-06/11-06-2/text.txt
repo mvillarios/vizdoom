@@ -1,8 +1,0 @@
-Creating game...
-Game created.
-Training
-Total elapsed time: 219.09 minutes
-Best episode:  12555
-Max reward:  8.0
-Average reward:  1.2495619355708316
-Steps count:  1400000
