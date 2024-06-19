@@ -15,7 +15,7 @@ ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 # Params
-TRAINING_TIMESTEPS = int(6e5)  # 600k
+TRAINING_TIMESTEPS = int(6e6)  # 6000k
 N_STEPS = 4096
 N_ENVS = 1
 FRAME_SKIP = 4
