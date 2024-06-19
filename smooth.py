@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-LOG_DIR = "logs/"
+LOG_DIR = "saves/ppo-5"
 
 def smooth_rewards(rewards, window_size):
     return np.convolve(rewards, np.ones(window_size) / window_size, mode='valid')
@@ -26,7 +26,7 @@ def plot_rewards_smoothed(filename, rewards, smoothed_rewards):
 if __name__ == "__main__":
     # Read the CSV file while handling malformed rows
     data = []
-    with open(LOG_DIR + "monitor.csv", 'r') as file:
+    with open(LOG_DIR + "/monitor.csv", 'r') as file:
         for line in file.readlines()[2:]:  # Skip the first two lines
             try:
                 r, l, t = map(float, line.split(','))

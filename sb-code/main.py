@@ -20,7 +20,8 @@ N_ENVS = 1
 FRAME_SKIP = 4
 BATCH_SIZE = 64
 
-LOG_DIR = "saves/ppo-5"
+# LOG_DIR = "saves/ppo-5"
+LOG_DIR = "saves/dqn-2"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -57,12 +58,22 @@ if __name__ == "__main__":
     eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     eval_env = VecTransposeImage(eval_env)
 
-    agent = PPO(
+    # agent = PPO(
+    #     "CnnPolicy", 
+    #     train_env,
+    #     n_steps=N_STEPS,
+    #     learning_rate=1e-2, 
+    #     batch_size=BATCH_SIZE,
+    #     verbose=1,
+    #     device='cuda'
+    # )
+
+    agent = DQN(
         "CnnPolicy", 
         train_env,
-        n_steps=N_STEPS,
         learning_rate=1e-2, 
         batch_size=BATCH_SIZE,
+        buffer_size=10000,
         verbose=1,
         device='cuda'
     )
@@ -76,8 +87,11 @@ if __name__ == "__main__":
         n_eval_episodes=10,
     )
 
-    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
-    agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+    # agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+    # agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+
+    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=evaluation_callback)
+    agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
 
     train_env.close()
     eval_env.close()

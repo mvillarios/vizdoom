@@ -4,7 +4,7 @@ import pandas as pd
 def plot_rewards(log_dir, window=10):
     # Read the CSV file while handling malformed rows
     data = []
-    with open(log_dir + "monitor.csv", 'r') as file:
+    with open(log_dir + "/monitor.csv", 'r') as file:
         for line in file.readlines()[2:]:  # Skip the first two lines
             try:
                 r, l, t = map(float, line.split(','))
