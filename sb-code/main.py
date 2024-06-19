@@ -3,7 +3,9 @@ import numpy as np
 import gymnasium as gym
 from stable_baselines3 import DQN, PPO
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common import callbacks
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -13,10 +15,11 @@ ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 # Params
-TRAINING_TIMESTEPS = int(6e6)  # Aproximadamente 6000 episodios
-N_STEPS = 128
+TRAINING_TIMESTEPS = int(6e5)  # 600k
+N_STEPS = 4096
 N_ENVS = 1
 FRAME_SKIP = 4
+BATCH_SIZE = 64  # Updated batch size
 
 LOG_DIR = "logs/"
 
@@ -45,21 +48,36 @@ if __name__ == "__main__":
         env = Monitor(env, LOG_DIR)
         return env
 
-    env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env)
-    env.envs[0].env.frame_skip = FRAME_SKIP  # Set frame skip for the environment
+    train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env)
+    train_env = VecTransposeImage(train_env)
 
-    model = PPO(
+    eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env)
+    eval_env = VecTransposeImage(eval_env)
+
+    agent = PPO(
         "CnnPolicy", 
-        env, 
+        train_env,
+        n_steps=N_STEPS,
         learning_rate=1e-2, 
-        #buffer_size=10000,
+        batch_size=BATCH_SIZE,  # Use batch size that is a divisor of n_steps
         verbose=1,
         device='cuda'
     )
-    model.learn(total_timesteps=TRAINING_TIMESTEPS)
-    model.save("ppo_vizdoom")
 
-    env.close()
+    evaluation_callback = callbacks.EvalCallback(
+        eval_env,
+        best_model_save_path=f"{LOG_DIR}/models",
+        log_path=f"{LOG_DIR}/eval",
+        eval_freq=5000,
+        render=False,
+        n_eval_episodes=10,
+    )
+
+    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+    agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+
+    train_env.close()
+    eval_env.close()
 
     # Read the CSV file while handling malformed rows
     data = []
