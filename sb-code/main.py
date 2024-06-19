@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     def wrap_env(env):
         env = ObservationWrapper(env)
-        env = Monitor(env, LOG_DIR)
+        env = Monitor(env, f"{LOG_DIR}/")
         return env
 
     env_kwargs = {

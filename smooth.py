@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-LOG_DIR = "saves/ppo-5"
+LOG_DIR = "saves/dqn-2"
 
 def smooth_rewards(rewards, window_size):
     return np.convolve(rewards, np.ones(window_size) / window_size, mode='valid')

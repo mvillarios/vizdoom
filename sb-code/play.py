@@ -13,7 +13,7 @@ from utils import plot_rewards
 ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
-MODEL_PATH = "saves/ppo-4/saves/ppo_vizdoom.zip"
+MODEL_PATH = "saves/ppo-5/saves/ppo_vizdoom.zip"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -44,12 +44,13 @@ if __name__ == "__main__":
     # Load the trained agent
     model = PPO.load(MODEL_PATH)
 
-    obs = env.reset()
-    done = False
-    while not done:
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
-        env.render()
+    for _ in range(10):
+        obs = env.reset()
+        done = False
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = env.step(action)
+            env.render()
 
     env.close()
 
