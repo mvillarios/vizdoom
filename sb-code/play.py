@@ -1,13 +1,19 @@
 import cv2
 import numpy as np
 import gymnasium as gym
-from stable_baselines3 import DQN
+from stable_baselines3 import DQN, PPO
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common import callbacks
+
 import vizdoom.gymnasium_wrapper
+from utils import plot_rewards
 
 ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
-MODEL_PATH = "dqn_vizdoom.zip"  # Path to the saved model
+
+MODEL_PATH = "saves/ppo-4/saves/ppo_vizdoom.zip"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -26,24 +32,25 @@ class ObservationWrapper(gym.ObservationWrapper):
         observation = cv2.resize(observation["screen"], self.image_shape_reverse)
         return observation
 
-def wrap_env(env):
-    env = ObservationWrapper(env)
-    return env
 
 if __name__ == "__main__":
-    env = make_vec_env(ENV, n_envs=1, wrapper_class=wrap_env)
-    env.envs[0].env.frame_skip = 1  # Set frame skip for the environment
-    env.envs[0].env.render_mode = "human" # Set render mode human
 
-    model = DQN.load(MODEL_PATH)
+    def wrap_env(env):
+        env = ObservationWrapper(env)
+        return env
+
+    env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 1, "render_mode": "human"})
+
+    # Load the trained agent
+    model = PPO.load(MODEL_PATH)
 
     obs = env.reset()
-    for _ in range(1000):  # Play for 1000 steps
-        action, _states = model.predict(obs)
-        obs, rewards, dones, info = env.step(action)
+    done = False
+    while not done:
+        action, _ = model.predict(obs, deterministic=True)
+        obs, reward, done, info = env.step(action)
         env.render()
 
-        if dones:
-            obs = env.reset()
-
     env.close()
+
+

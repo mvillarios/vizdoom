@@ -6,22 +6,21 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import callbacks
-import matplotlib.pyplot as plt
-import pandas as pd
 
 import vizdoom.gymnasium_wrapper
+from utils import plot_rewards
 
 ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 # Params
-TRAINING_TIMESTEPS = int(6e6)  # 6000k
+TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_STEPS = 4096
 N_ENVS = 1
 FRAME_SKIP = 4
-BATCH_SIZE = 64  # Updated batch size
+BATCH_SIZE = 64
 
-LOG_DIR = "logs/"
+LOG_DIR = "saves/ppo-5"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -48,10 +47,14 @@ if __name__ == "__main__":
         env = Monitor(env, LOG_DIR)
         return env
 
-    train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env)
+    env_kwargs = {
+        "frame_skip": FRAME_SKIP,
+    }
+
+    train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     train_env = VecTransposeImage(train_env)
 
-    eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env)
+    eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     eval_env = VecTransposeImage(eval_env)
 
     agent = PPO(
@@ -59,7 +62,7 @@ if __name__ == "__main__":
         train_env,
         n_steps=N_STEPS,
         learning_rate=1e-2, 
-        batch_size=BATCH_SIZE,  # Use batch size that is a divisor of n_steps
+        batch_size=BATCH_SIZE,
         verbose=1,
         device='cuda'
     )
@@ -79,27 +82,4 @@ if __name__ == "__main__":
     train_env.close()
     eval_env.close()
 
-    # Read the CSV file while handling malformed rows
-    data = []
-    with open(LOG_DIR + "monitor.csv", 'r') as file:
-        for line in file.readlines()[2:]:  # Skip the first two lines
-            try:
-                r, l, t = map(float, line.split(','))
-                data.append((r, l, t))
-            except ValueError:
-                continue  # Skip malformed rows
-
-    # Convert to DataFrame
-    results_df = pd.DataFrame(data, columns=['r', 'l', 't'])
-
-    # Smooth the rewards
-    results_df['r'] = results_df['r'].rolling(window=10).mean()
-
-    # Plot the rewards
-    rewards = results_df['r']
-
-    plt.plot(rewards)
-    plt.xlabel('Episode')
-    plt.ylabel('Reward')
-    plt.title('Reward per Episode')
-    plt.savefig("reward_per_episode.png")
+    plot_rewards(LOG_DIR)
