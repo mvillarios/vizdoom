@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 import gymnasium as gym
@@ -20,8 +21,11 @@ N_ENVS = 1
 FRAME_SKIP = 4
 BATCH_SIZE = 64
 
-# LOG_DIR = "saves/ppo-5"
-LOG_DIR = "saves/dqn-2"
+model = "dqn"
+num = "3"
+map = "defend-center"
+
+LOG_DIR = f"saves/{map}/{model}-{num}"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -40,6 +44,19 @@ class ObservationWrapper(gym.ObservationWrapper):
         observation = cv2.resize(observation["screen"], self.image_shape_reverse)
         return observation
 
+class EpsilonLogger(callbacks.BaseCallback):
+    def __init__(self, log_dir, verbose=0):
+        super(EpsilonLogger, self).__init__(verbose)
+        self.epsilons = []
+        self.log_dir = log_dir
+        os.makedirs(log_dir, exist_ok=True)
+
+    def _on_step(self) -> bool:
+        self.epsilons.append(self.model.exploration_rate)
+        return True
+
+    def _on_training_end(self) -> None:
+        np.save(os.path.join(self.log_dir, 'epsilons.npy'), self.epsilons)
 
 if __name__ == "__main__":
 
@@ -58,26 +75,6 @@ if __name__ == "__main__":
     eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     eval_env = VecTransposeImage(eval_env)
 
-    # agent = PPO(
-    #     "CnnPolicy", 
-    #     train_env,
-    #     n_steps=N_STEPS,
-    #     learning_rate=1e-2, 
-    #     batch_size=BATCH_SIZE,
-    #     verbose=1,
-    #     device='cuda'
-    # )
-
-    agent = DQN(
-        "CnnPolicy", 
-        train_env,
-        learning_rate=1e-2, 
-        batch_size=BATCH_SIZE,
-        buffer_size=10000,
-        verbose=1,
-        device='cuda'
-    )
-
     evaluation_callback = callbacks.EvalCallback(
         eval_env,
         best_model_save_path=f"{LOG_DIR}/models",
@@ -87,11 +84,36 @@ if __name__ == "__main__":
         n_eval_episodes=10,
     )
 
-    # agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
-    # agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+    if model == "dqn":
+        agent = DQN(
+            "CnnPolicy", 
+            train_env,
+            batch_size=BATCH_SIZE,
+            exploration_final_eps=1e-2,
+            learning_starts=1e5,
+            buffer_size=10000,
+            verbose=1,
+            device='cuda'
+        )
 
-    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=evaluation_callback)
-    agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
+        epsilon_logger = EpsilonLogger(LOG_DIR)
+        
+        agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
+        agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
+
+    else:
+        agent = PPO(
+            "CnnPolicy", 
+            train_env,
+            n_steps=N_STEPS,
+            batch_size=BATCH_SIZE,
+            verbose=1,
+            device='cuda'
+        )
+
+        agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+        agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+
 
     train_env.close()
     eval_env.close()

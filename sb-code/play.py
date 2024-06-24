@@ -8,12 +8,14 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import callbacks
 
 import vizdoom.gymnasium_wrapper
-from utils import plot_rewards
 
 ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
-MODEL_PATH = "saves/ppo-5/saves/ppo_vizdoom.zip"
+model = "dqn"
+num = "2"
+map = "defend-center"
+MODEL_PATH = f"saves/{map}/{model}-{num}/saves/{model}_vizdoom"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -42,15 +44,24 @@ if __name__ == "__main__":
     env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 1, "render_mode": "human"})
 
     # Load the trained agent
-    model = PPO.load(MODEL_PATH)
+    if model == "dqn":
+        agent = DQN.load(MODEL_PATH, print_system_info=True)
+    else:
+        agent = PPO.load(MODEL_PATH, print_system_info=True)
 
+    episode = 0
     for _ in range(10):
         obs = env.reset()
         done = False
+        total_reward = 0
+        episode+=1
         while not done:
-            action, _ = model.predict(obs, deterministic=True)
+            action, _ = agent.predict(obs, deterministic=True)
             obs, reward, done, info = env.step(action)
+            total_reward += reward
             env.render()
+
+        print(f"Episode: {episode} Reward: {total_reward}")
 
     env.close()
 
