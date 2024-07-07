@@ -15,7 +15,7 @@ ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 # Params
-TRAINING_TIMESTEPS = int(6e5)  # 600k
+TRAINING_TIMESTEPS = int(6e4)  # 600k
 N_STEPS = 4096
 N_ENVS = 1
 FRAME_SKIP = 4
@@ -89,8 +89,9 @@ if __name__ == "__main__":
             "CnnPolicy", 
             train_env,
             batch_size=BATCH_SIZE,
-            exploration_final_eps=1e-2,
-            learning_starts=1e5,
+            learning_rate=0.01,
+            exploration_final_eps=0.1,
+            learning_starts=1e4,
             buffer_size=10000,
             verbose=1,
             device='cuda'
@@ -118,4 +119,4 @@ if __name__ == "__main__":
     train_env.close()
     eval_env.close()
 
-    plot_rewards(LOG_DIR)
+    plot_rewards(LOG_DIR, model)
