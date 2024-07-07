@@ -1,0 +1,42 @@
+Using cuda device
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 126      |
+|    ep_rew_mean     | 6.78     |
+| time/              |          |
+|    fps             | 395      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 4096     |
+---------------------------------
+Eval num_timesteps=5000, episode_reward=9.70 +/- 3.72
+Episode length: 131.80 +/- 47.92
+------------------------------------------
+| eval/                   |              |
+|    mean_ep_length       | 132          |
+|    mean_reward          | 9.7          |
+| time/                   |              |
+|    total_timesteps      | 5000         |
+| train/                  |              |
+|    approx_kl            | 0.0048828125 |
+|    clip_fraction        | 0.0559       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -1.38        |
+|    explained_variance   | 0.0256       |
+|    learning_rate        | 0.01         |
+|    loss                 | 0.257        |
+|    n_updates            | 10           |
+|    policy_gradient_loss | 0.000161     |
+|    value_loss           | 2.22         |
+------------------------------------------
+New best mean reward!
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 133      |
+|    ep_rew_mean     | 7.57     |
+| time/              |          |
+|    fps             | 325      |
+|    iterations      | 2        |
+|    time_elapsed    | 25       |
+|    total_timesteps | 8192     |
+---------------------------------
