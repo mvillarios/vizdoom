@@ -22,10 +22,10 @@ FRAME_SKIP = 4
 BATCH_SIZE = 64
 
 model = "dqn"
-num = "3"
+num = "1"
 map = "defend-center"
 
-LOG_DIR = f"saves/{map}/{model}-{num}"
+LOG_DIR = f"saves-tunning/{map}/{model}-{num}"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -89,10 +89,12 @@ if __name__ == "__main__":
             "CnnPolicy", 
             train_env,
             batch_size=BATCH_SIZE,
-            learning_rate=0.01,
-            exploration_final_eps=0.1,
-            learning_starts=1e4,
-            buffer_size=10000,
+            learning_rate=4.61e-5,
+            buffer_size=53425,
+            gamma=0.92,
+            exploration_fraction=0.28,
+            exploration_final_eps=0.016,
+            learning_starts=1e5,
             verbose=1,
             device='cuda'
         )
