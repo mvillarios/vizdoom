@@ -14,7 +14,7 @@ import vizdoom.gymnasium_wrapper
 
 ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(6e4)  # 600k
+TRAINING_TIMESTEPS = int(6e4)
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -50,6 +50,7 @@ def objective_dqn(trial):
     batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
     learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)
     buffer_size = trial.suggest_int('buffer_size', int(1e4), int(1e5))
+    gamma = trial.suggest_uniform('gamma', 0.9, 0.9999)
     exploration_fraction = trial.suggest_uniform('exploration_fraction', 0.1, 0.5)
     exploration_final_eps = trial.suggest_uniform('exploration_final_eps', 0.01, 0.1)
 
@@ -66,7 +67,7 @@ def objective_dqn(trial):
 
     agent = DQN(
         "CnnPolicy", train_env, batch_size=batch_size,
-        learning_rate=learning_rate, exploration_final_eps=exploration_final_eps,
+        learning_rate=learning_rate, gamma=gamma, exploration_final_eps=exploration_final_eps,
         exploration_fraction=exploration_fraction, buffer_size=buffer_size,
         learning_starts=1e4, verbose=1, device='cuda'
     )
@@ -113,13 +114,15 @@ def objective_ppo(trial):
 
 if __name__ == "__main__":
     # Optimize DQN
-    dqn_study = optuna.create_study(direction='maximize')
-    dqn_study.optimize(objective_dqn, n_trials=50)
-    print(f'DQN Best trial: {dqn_study.best_trial.value}')
-    print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
+    if model == "dqn-tunning":
+        dqn_study = optuna.create_study(direction='maximize')
+        dqn_study.optimize(objective_dqn, n_trials=50)
+        print(f'DQN Best trial: {dqn_study.best_trial.value}')
+        print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
 
     # # Optimize PPO
-    # ppo_study = optuna.create_study(direction='maximize')
-    # ppo_study.optimize(objective_ppo, n_trials=50)
-    # print(f'PPO Best trial: {ppo_study.best_trial.value}')
-    # print(f'PPO Best hyperparameters: {ppo_study.best_trial.params}')
+    if model == "ppo-tunning":
+        ppo_study = optuna.create_study(direction='maximize')
+        ppo_study.optimize(objective_ppo, n_trials=50)
+        print(f'PPO Best trial: {ppo_study.best_trial.value}')
+        print(f'PPO Best hyperparameters: {ppo_study.best_trial.params}')
