@@ -17,7 +17,7 @@ TRAINING_TIMESTEPS = int(6e4)
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "dqn-tunning"
+model = "ppo-tunning"
 num = "1"
 map = "defend-center"
 
@@ -119,15 +119,9 @@ if __name__ == "__main__":
         print(f'DQN Best trial: {dqn_study.best_trial.value}')
         print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
 
-        print(f'Best Hyperparameters: {dqn_study.best_params}')
-        print(f'Best Reward: {dqn_study.best_value}')
-
     # # Optimize PPO
     if model == "ppo-tunning":
         ppo_study = optuna.create_study(direction='maximize')
         ppo_study.optimize(objective_ppo, n_trials=50)
         print(f'PPO Best trial: {ppo_study.best_trial.value}')
         print(f'PPO Best hyperparameters: {ppo_study.best_trial.params}')
-
-        print(f'Best Hyperparameters: {ppo_study.best_params}')
-        print(f'Best Reward: {ppo_study.best_value}')
