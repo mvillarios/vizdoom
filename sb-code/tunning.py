@@ -48,11 +48,11 @@ env_kwargs = {"frame_skip": FRAME_SKIP}
 
 def objective_dqn(trial):
     batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
-    learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
     buffer_size = trial.suggest_int('buffer_size', int(1e4), int(1e5))
-    gamma = trial.suggest_uniform('gamma', 0.9, 0.9999)
-    exploration_fraction = trial.suggest_uniform('exploration_fraction', 0.1, 0.5)
-    exploration_final_eps = trial.suggest_uniform('exploration_final_eps', 0.01, 0.1)
+    gamma = trial.suggest_float('gamma', 0.9, 0.9999)
+    exploration_fraction = trial.suggest_float('exploration_fraction', 0.1, 0.5)
+    exploration_final_eps = trial.suggest_float('exploration_final_eps', 0.01, 0.1)
 
     train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     train_env = VecTransposeImage(train_env)
@@ -83,9 +83,9 @@ def objective_dqn(trial):
 def objective_ppo(trial):
     n_steps = trial.suggest_categorical('n_steps', [2048, 4096, 8192])
     batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
-    learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)
-    gamma = trial.suggest_uniform('gamma', 0.9, 0.9999)
-    gae_lambda = trial.suggest_uniform('gae_lambda', 0.8, 0.99)
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
+    gamma = trial.suggest_float('gamma', 0.9, 0.9999)
+    gae_lambda = trial.suggest_float('gae_lambda', 0.8, 0.99)
 
     train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     train_env = VecTransposeImage(train_env)
@@ -120,9 +120,15 @@ if __name__ == "__main__":
         print(f'DQN Best trial: {dqn_study.best_trial.value}')
         print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
 
+        print(f'Best Hyperparameters: {dqn_study.best_params}')
+        print(f'Best Reward: {dqn_study.best_value}')
+
     # # Optimize PPO
     if model == "ppo-tunning":
         ppo_study = optuna.create_study(direction='maximize')
         ppo_study.optimize(objective_ppo, n_trials=50)
         print(f'PPO Best trial: {ppo_study.best_trial.value}')
         print(f'PPO Best hyperparameters: {ppo_study.best_trial.params}')
+
+        print(f'Best Hyperparameters: {ppo_study.best_params}')
+        print(f'Best Reward: {ppo_study.best_value}')
