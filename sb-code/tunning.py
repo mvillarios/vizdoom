@@ -14,7 +14,7 @@ import vizdoom.gymnasium_wrapper
 #ENV = "VizdoomDefendCenter-v0"
 ENV = "VizdoomDefendLine-v0"
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(6e4)
+TRAINING_TIMESTEPS = int(6e4)# 60000
 N_ENVS = 1
 FRAME_SKIP = 4
 
