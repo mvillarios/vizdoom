@@ -22,7 +22,7 @@ model = "ppo"
 num = "1"
 map = "defend-line"
 
-LOG_DIR = f"tunnning/{map}/{model}-{num}"
+LOG_DIR = f"tunning/{map}/{model}-{num}"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
