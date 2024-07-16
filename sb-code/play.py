@@ -13,9 +13,9 @@ ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 model = "dqn"
-num = "2"
+num = "1"
 map = "defend-center"
-MODEL_PATH = f"saves/{map}/{model}-{num}/saves/{model}_vizdoom"
+MODEL_PATH = f"saves-tunning/{map}/{model}-{num}/saves/{model}_vizdoom"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         agent = PPO.load(MODEL_PATH, print_system_info=True)
 
     episode = 0
-    for _ in range(10):
+    for _ in range(50):
         obs = env.reset()
         done = False
         total_reward = 0

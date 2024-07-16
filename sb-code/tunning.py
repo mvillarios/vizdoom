@@ -11,17 +11,18 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomDefendCenter-v0"
+#ENV = "VizdoomDefendCenter-v0"
+ENV = "VizdoomDefendLine-v0"
 RESOLUTION = (60, 45)
 TRAINING_TIMESTEPS = int(6e4)
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "ppo-tunning"
+model = "ppo"
 num = "1"
-map = "defend-center"
+map = "defend-line"
 
-LOG_DIR = f"saves/{map}/{model}-{num}"
+LOG_DIR = f"tunnning/{map}/{model}-{num}"
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -113,14 +114,14 @@ def objective_ppo(trial):
 
 if __name__ == "__main__":
     # Optimize DQN
-    if model == "dqn-tunning":
+    if model == "dqn":
         dqn_study = optuna.create_study(direction='maximize')
         dqn_study.optimize(objective_dqn, n_trials=50)
         print(f'DQN Best trial: {dqn_study.best_trial.value}')
         print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
 
     # # Optimize PPO
-    if model == "ppo-tunning":
+    if model == "ppo":
         ppo_study = optuna.create_study(direction='maximize')
         ppo_study.optimize(objective_ppo, n_trials=50)
         print(f'PPO Best trial: {ppo_study.best_trial.value}')
