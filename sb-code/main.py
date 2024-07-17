@@ -19,8 +19,8 @@ TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "ppo"
-num = "1"
+model = "dqn"
+num = "2"
 map = "defend-line"
 
 LOG_DIR = f"saves-tunning/{map}/{model}-{num}"
