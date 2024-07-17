@@ -107,10 +107,10 @@ if __name__ == "__main__":
             "CnnPolicy", 
             train_env,
             n_steps=2048,
-            batch_size=128,
-            learning_rate=0.00038,
-            gamma=0.94,
-            gae_lambda=0.93,
+            batch_size=64,
+            learning_rate=7.4e-4,
+            gamma=0.92,
+            gae_lambda=0.95,
             verbose=1,
             device='cuda'
         )
