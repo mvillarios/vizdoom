@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-LOG_DIR = "saves-tunning/defend-center/ppo-1"
+LOG_DIR = "saves-tunning/defend-line/ppo-1"
 
 def smooth_rewards(rewards, window_size):
     return np.convolve(rewards, np.ones(window_size) / window_size, mode='valid')
@@ -17,10 +17,6 @@ def plot_rewards_smoothed(filename, rewards, smoothed_rewards):
     ax1.plot(range(len(rewards)), rewards, color=color, label='Reward')
     ax1.tick_params(axis='y', labelcolor=color)
     ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:orange', linestyle='--', label='Smoothed Reward')
-
-    # Set the y-axis limits and ticks
-    ax1.set_ylim(-1, 20)
-    ax1.set_yticks(np.arange(-1, 20, 1))
 
     fig.tight_layout()
     ax1.legend(loc='upper left')

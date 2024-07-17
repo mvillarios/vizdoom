@@ -42,10 +42,6 @@ def plot_rewards(log_dir, is_dqn, window=10):
     ax1.tick_params(axis='y', labelcolor=color)
     ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:orange', linestyle='--', label='Smoothed Reward')
 
-    # Set the y-axis limits and ticks
-    ax1.set_ylim(-1, 15)
-    ax1.set_yticks(np.arange(-1, 16, 1))
-
     if is_dqn == "dqn":
         # Load epsilon values
         try:
