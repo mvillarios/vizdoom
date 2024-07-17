@@ -19,7 +19,7 @@ TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "dqn"
+model = "ppo"
 num = "1"
 map = "defend-line"
 
