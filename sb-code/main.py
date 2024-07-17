@@ -11,7 +11,7 @@ from stable_baselines3.common import callbacks
 import vizdoom.gymnasium_wrapper
 from utils import plot_rewards
 
-ENV = "VizdoomDefendLine-v0"
+ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 # Params
@@ -19,9 +19,9 @@ TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "dqn"
+model = "ppo"
 num = "2"
-map = "defend-line"
+map = "defend-center"
 
 LOG_DIR = f"saves-tunning/{map}/{model}-{num}"
 
