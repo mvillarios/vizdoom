@@ -11,7 +11,7 @@ from stable_baselines3.common import callbacks
 import vizdoom.gymnasium_wrapper
 from utils import plot_rewards
 
-ENV = "VizdoomDefendCenter-v0"
+ENV = "VizdoomDefendLine-v0"
 RESOLUTION = (60, 45)
 
 # Params
@@ -19,9 +19,9 @@ TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "ppo"
+model = "dqn"
 num = "1"
-map = "defend-center"
+map = "defend-line"
 
 LOG_DIR = f"saves-tunning/{map}/{model}-{num}"
 
@@ -87,11 +87,11 @@ if __name__ == "__main__":
             "CnnPolicy", 
             train_env,
             batch_size=64,
-            learning_rate=4.61e-5,
-            buffer_size=53425,
-            gamma=0.92,
-            exploration_fraction=0.28,
-            exploration_final_eps=0.016,
+            learning_rate=0.00013,
+            buffer_size=94702,
+            gamma=0.97,
+            exploration_fraction=0.15,
+            exploration_final_eps=0.042,
             learning_starts=1e5,
             verbose=1,
             device='cuda'
@@ -107,10 +107,10 @@ if __name__ == "__main__":
             "CnnPolicy", 
             train_env,
             n_steps=2048,
-            batch_size=64,
-            learning_rate=7.4e-4,
-            gamma=0.92,
-            gae_lambda=0.95,
+            batch_size=128,
+            learning_rate=0.00038,
+            gamma=0.94,
+            gae_lambda=0.93,
             verbose=1,
             device='cuda'
         )
