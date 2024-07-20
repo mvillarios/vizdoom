@@ -13,7 +13,7 @@ ENV = "VizdoomDefendCenter-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "1"
+num = "2"
 map = "defend-center"
 MODEL_PATH = f"saves-tunning/{map}/{model}-{num}/saves/{model}_vizdoom"
 
@@ -48,9 +48,6 @@ if __name__ == "__main__":
         agent = DQN.load(MODEL_PATH, print_system_info=True)
     else:
         agent = PPO.load(MODEL_PATH, print_system_info=True)
-
-    #Esperar a que el usuario presione una tecla para comenzar
-    input("Press Enter to start...")
 
     episode = 0
     for _ in range(50):

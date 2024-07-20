@@ -12,15 +12,16 @@ from stable_baselines3.common.evaluation import evaluate_policy
 import vizdoom.gymnasium_wrapper
 
 #ENV = "VizdoomDefendCenter-v0"
-ENV = "VizdoomDefendLine-v0"
+#ENV = "VizdoomDefendLine-v0"
+ENV = "VizdoomHealthGathering-v0"
 RESOLUTION = (60, 45)
 TRAINING_TIMESTEPS = int(6e4)# 60000
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "ppo"
+model = "dqn"
 num = "1"
-map = "defend-line"
+map = "health-gathering"
 
 LOG_DIR = f"tunning/{map}/{model}-{num}"
 
