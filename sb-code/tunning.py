@@ -13,15 +13,17 @@ import vizdoom.gymnasium_wrapper
 
 #ENV = "VizdoomDefendCenter-v0"
 #ENV = "VizdoomDefendLine-v0"
-ENV = "VizdoomHealthGathering-v0"
+#ENV = "VizdoomHealthGathering-v0"
+#ENV = "VizdoomCorridor-v0"
+ENV = "VizdoomMyWayHome-v0"
 RESOLUTION = (60, 45)
 TRAINING_TIMESTEPS = int(6e4)# 60000
 N_ENVS = 1
 FRAME_SKIP = 4
 
 model = "dqn"
-num = "1"
-map = "health-gathering"
+num = "2"
+map = "my-way-home"
 
 LOG_DIR = f"tunning/{map}/{model}-{num}"
 
