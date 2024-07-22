@@ -25,7 +25,7 @@ DQN_PARAMS = {
         "gamma": 0.957,
         "exploration_fraction": 0.3135,
         "exploration_final_eps": 0.0549,
-        "learning_starts": 1e5,
+        "learning_starts": 3e6,
     },
     "VizdoomMyWayHome-v0": {
         "batch_size": 64,

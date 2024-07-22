@@ -13,22 +13,22 @@ from utils import plot_rewards
 from params import DQN_PARAMS, PPO_PARAMS
 
 ENV_LIST = [
-    "VizdoomDefendCenter-v0", 
-    "VizdoomDefendLine-v0",
+    #"VizdoomDefendCenter-v0", 
+    #"VizdoomDefendLine-v0",
     "VizdoomCorridor-v0",
-    "VizdoomMyWayHome-v0",
-    "VizdoomHealthGathering-v0"
+    #"VizdoomMyWayHome-v0",
+    #"VizdoomHealthGathering-v0"
     # "VizdoomPredictPosition-v0",
     # "VizdoomTakeCover-v0",
     # "VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
-    "defend-center",
-    "defend-line",
+    #"defend-center",
+    #"defend-line",
     "corridor",
-    "my-way-home",
-    "health-gathering",
+    #"my-way-home",
+    #"health-gathering",
     # "predict-position",
     # "take-cover"
     # "deathmatch",
@@ -40,11 +40,11 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(6e5)  # 600k
+TRAINING_TIMESTEPS = int(6e6)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-num = 1
+num = 2
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         "frame_skip": FRAME_SKIP,
     }
 
-    start_index = 2  # comienza desde el tercer mapa a entrenar
+    start_index = 0  # comienza desde el tercer mapa a entrenar
 
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
