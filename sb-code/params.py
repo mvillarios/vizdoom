@@ -1,0 +1,86 @@
+
+DQN_PARAMS = {
+    "VizdoomDefendCenter-v0": {
+        "batch_size": 32,
+        "learning_rate": 4.61e-5,
+        "buffer_size": 53425,
+        "gamma": 0.92,
+        "exploration_fraction": 0.28,
+        "exploration_final_eps": 0.016,
+        "learning_starts": 1e5,
+    },
+    "VizdoomDefendLine-v0": {
+        "batch_size": 64,
+        "learning_rate": 0.00013,
+        "buffer_size": 94702,
+        "gamma": 0.97,
+        "exploration_fraction": 0.15,
+        "exploration_final_eps": 0.042,
+        "learning_starts": 1e5,
+    },
+    "VizdoomDeadlyCorridor-v0": {
+        "batch_size": 64,
+        "learning_rate": 0.00017,
+        "buffer_size": 15818,
+        "gamma": 0.957,
+        "exploration_fraction": 0.3135,
+        "exploration_final_eps": 0.0549,
+        "learning_starts": 1e5,
+    },
+    "VizdoomMyWayHome-v0": {
+        "batch_size": 64,
+        "learning_rate": 4.0935e-5,
+        "buffer_size": 50519,
+        "gamma": 0.9646,
+        "exploration_fraction": 0.4376,
+        "exploration_final_eps": 0.0908,
+        "learning_starts": 1e5,
+    },
+    "VizdoomHealthGathering-v0": {
+        "batch_size": 128,
+        "learning_rate": 1.055e-5,
+        "buffer_size": 89574,
+        "gamma": 0.9246,
+        "exploration_fraction": 0.1524,
+        "exploration_final_eps": 0.0251,
+        "learning_starts": 1e5,
+    },
+}
+
+PPO_PARAMS = {
+    "VizdoomDefendCenter-v0": {
+        "n_steps": 2048,
+        "batch_size": 64,
+        "learning_rate": 7.4e-4,
+        "gamma": 0.92,
+        "gae_lambda": 0.95,
+    },
+    "VizdoomDefendLine-v0": {
+        "n_steps": 2048,
+        "batch_size": 128,
+        "learning_rate": 0.00038,
+        "gamma": 0.94,
+        "gae_lambda": 0.93,
+    },
+    "VizdoomDeadlyCorridor-v0": {
+        "n_steps": 2048,
+        "batch_size": 128,
+        "learning_rate": 1.06e-5,
+        "gamma": 0.9635,
+        "gae_lambda": 0.879,
+    },
+    "VizdoomMyWayHome-v0": {
+        "n_steps": 8192,
+        "batch_size": 32,
+        "learning_rate": 0.0006517,
+        "gamma": 0.9345,
+        "gae_lambda": 0.8147,
+    },
+    "VizdoomHealthGathering-v0": {
+        "n_steps": 4096,
+        "batch_size": 32,
+        "learning_rate": 0.0002044,
+        "gamma": 0.9893,
+        "gae_lambda": 0.8687,
+    },
+}

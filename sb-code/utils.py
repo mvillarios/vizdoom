@@ -32,15 +32,20 @@ def plot_rewards(log_dir, is_dqn, window=10):
     # Smooth the rewards
     smoothed_rewards = smooth_rewards(results_df['r'].to_numpy(), window)
 
-    # Plot the rewards
+    # Calculate average reward
+    avg_reward = results_df['r'].mean()
+
+    # Plot all rewards and smoothed rewards
     fig, ax1 = plt.subplots()
 
     color = 'tab:blue'
     ax1.set_xlabel('Episode')
     ax1.set_ylabel('Reward', color=color)
     ax1.plot(results_df.index, results_df['r'], color=color, label='Reward')
-    ax1.tick_params(axis='y', labelcolor=color)
     ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color='tab:orange', linestyle='--', label='Smoothed Reward')
+    ax1.axhline(avg_reward, color='tab:green', linestyle='-', label='Average Reward')
+
+    ax1.tick_params(axis='y', labelcolor=color)
 
     if is_dqn == "dqn":
         # Load epsilon values
@@ -49,11 +54,11 @@ def plot_rewards(log_dir, is_dqn, window=10):
         except FileNotFoundError as e:
             print(f"Error: {e}")
             return
-        
+
         # Normalize epsilon steps to match the number of episodes
         epsilon_steps, epsilon_vals = zip(*enumerate(epsilon_values))
         normalized_steps = [step / len(epsilon_values) * len(results_df) for step in epsilon_steps]
-        
+
         ax2 = ax1.twinx()
         color = 'tab:red'
         ax2.set_ylabel('Epsilon', color=color)
@@ -70,4 +75,21 @@ def plot_rewards(log_dir, is_dqn, window=10):
         ax1.legend(loc='upper right')
 
     plt.savefig(os.path.join(log_dir, 'reward.png'))
+    plt.close()
+
+    # Plot only smoothed rewards and average reward
+    fig, ax1 = plt.subplots()
+
+    color = 'tab:blue'
+    ax1.set_xlabel('Episode')
+    ax1.set_ylabel('Smoothed Reward', color=color)
+    ax1.plot(range(len(smoothed_rewards)), smoothed_rewards, color=color, label='Smoothed Reward')
+    ax1.axhline(avg_reward, color='tab:green', linestyle='-', label='Average Reward')
+
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    fig.tight_layout()
+    ax1.legend(loc='upper right')
+
+    plt.savefig(os.path.join(log_dir, 'smoothed_reward.png'))
     plt.close()

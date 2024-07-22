@@ -4,26 +4,47 @@ import numpy as np
 import gymnasium as gym
 from stable_baselines3 import DQN, PPO
 from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import VecTransposeImage, DummyVecEnv
+from stable_baselines3.common.vec_env import VecTransposeImage
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import callbacks
 
 import vizdoom.gymnasium_wrapper
 from utils import plot_rewards
+from params import DQN_PARAMS, PPO_PARAMS
 
-ENV = "VizdoomDefendCenter-v0"
+ENV_LIST = [
+    "VizdoomDefendCenter-v0", 
+    "VizdoomDefendLine-v0",
+    "VizdoomCorridor-v0",
+    "VizdoomMyWayHome-v0",
+    "VizdoomHealthGathering-v0"
+    # "VizdoomPredictPosition-v0",
+    # "VizdoomTakeCover-v0",
+    # "VizdoomDeathmatch-v0",
+]
+
+MAP_LIST = [
+    "defend-center",
+    "defend-line",
+    "corridor",
+    "my-way-home",
+    "health-gathering",
+    # "predict-position",
+    # "take-cover"
+    # "deathmatch",
+]
+
+MODEL_LIST = [
+    "dqn",
+    "ppo"
+]
+
 RESOLUTION = (60, 45)
-
-# Params
 TRAINING_TIMESTEPS = int(6e5)  # 600k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-model = "ppo"
-num = "2"
-map = "defend-center"
-
-LOG_DIR = f"saves-tunning/{map}/{model}-{num}"
+num = 1
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -56,70 +77,81 @@ class EpsilonLogger(callbacks.BaseCallback):
     def _on_training_end(self) -> None:
         np.save(os.path.join(self.log_dir, 'epsilons.npy'), self.epsilons)
 
-if __name__ == "__main__":
+class EnvWrapper:
+    def __init__(self, log_dir):
+        self.log_dir = log_dir
 
-    def wrap_env(env):
+    def __call__(self, env):
         env = ObservationWrapper(env)
-        env = Monitor(env, f"{LOG_DIR}/")
+        env = Monitor(env, self.log_dir)
         return env
 
+if __name__ == "__main__":
     env_kwargs = {
         "frame_skip": FRAME_SKIP,
     }
 
-    train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
-    train_env = VecTransposeImage(train_env)
+    start_index = 2  # comienza desde el tercer mapa a entrenar
 
-    eval_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
-    eval_env = VecTransposeImage(eval_env)
+    for model in MODEL_LIST:
+        for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
+            LOG_DIR = f"saves-tunning/{map_name}/{model}-{num}"
+            env_wrapper = EnvWrapper(log_dir=f"{LOG_DIR}/")
 
-    evaluation_callback = callbacks.EvalCallback(
-        eval_env,
-        best_model_save_path=f"{LOG_DIR}/models",
-        log_path=f"{LOG_DIR}/eval",
-        eval_freq=5000,
-        render=False,
-        n_eval_episodes=10,
-    )
+            train_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper, env_kwargs=env_kwargs)
+            train_env = VecTransposeImage(train_env)
 
-    if model == "dqn":
-        agent = DQN(
-            "CnnPolicy", 
-            train_env,
-            batch_size=64,
-            learning_rate=0.00013,
-            buffer_size=94702,
-            gamma=0.97,
-            exploration_fraction=0.15,
-            exploration_final_eps=0.042,
-            learning_starts=1e5,
-            verbose=1,
-            device='cuda'
-        )
+            eval_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper, env_kwargs=env_kwargs)
+            eval_env = VecTransposeImage(eval_env)
 
-        epsilon_logger = EpsilonLogger(LOG_DIR)
-        
-        agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
-        agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
+            evaluation_callback = callbacks.EvalCallback(
+                eval_env,
+                best_model_save_path=f"{LOG_DIR}/models",
+                log_path=f"{LOG_DIR}/eval",
+                eval_freq=5000,
+                render=False,
+                n_eval_episodes=10,
+            )
 
-    else:
-        agent = PPO(
-            "CnnPolicy", 
-            train_env,
-            n_steps=2048,
-            batch_size=64,
-            learning_rate=7.4e-4,
-            gamma=0.92,
-            gae_lambda=0.95,
-            verbose=1,
-            device='cuda'
-        )
+            if model == "dqn":
+                params = DQN_PARAMS.get(env_name, {})
+                agent = DQN(
+                    "CnnPolicy",
+                    train_env,
+                    batch_size=params.get("batch_size", 64),
+                    learning_rate=params.get("learning_rate", 0.0001),
+                    buffer_size=params.get("buffer_size", 50000),
+                    gamma=params.get("gamma", 0.99),
+                    exploration_fraction=params.get("exploration_fraction", 0.1),
+                    exploration_final_eps=params.get("exploration_final_eps", 0.02),
+                    learning_starts=params.get("learning_starts", 10000),
+                    verbose=1,
+                    device='cuda'
+                )
 
-        agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
-        agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+                epsilon_logger = EpsilonLogger(LOG_DIR)
+                
+                agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
+                agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
 
+            else:
+                params = PPO_PARAMS.get(env_name, {})
+                agent = PPO(
+                    "CnnPolicy",
+                    train_env,
+                    n_steps=params.get("n_steps", 2048),
+                    batch_size=params.get("batch_size", 64),
+                    learning_rate=params.get("learning_rate", 3e-4),
+                    gamma=params.get("gamma", 0.99),
+                    gae_lambda=params.get("gae_lambda", 0.95),
+                    verbose=1,
+                    device='cuda'
+                )
 
-    train_env.close()
-    eval_env.close()
+                agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+                agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
 
-    plot_rewards(LOG_DIR, model)
+            train_env.close()
+            eval_env.close()
+
+            plot_rewards(LOG_DIR, model)
