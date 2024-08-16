@@ -11,15 +11,15 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomHealthGathering-v0"
+ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(6e4)# 60000
+TRAINING_TIMESTEPS = int(2e5)# 200000
 N_ENVS = 1
 FRAME_SKIP = 4
 
 model = "dqn"
-num = "1"
-map = "health-gathering"
+num = "2"
+map = "corridor"
 
 LOG_DIR = f"tunning/{map}/{model}-{num}"
 
@@ -48,10 +48,11 @@ env_kwargs = {"frame_skip": FRAME_SKIP}
 def objective_dqn(trial):
     batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
     learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
-    buffer_size = trial.suggest_int('buffer_size', int(1e4), int(1e5))
+    buffer_size = trial.suggest_int('buffer_size', int(1e3), int(2e4))
     gamma = trial.suggest_float('gamma', 0.9, 0.9999)
     exploration_fraction = trial.suggest_float('exploration_fraction', 0.1, 0.5)
     exploration_final_eps = trial.suggest_float('exploration_final_eps', 0.01, 0.1)
+    learning_starts = trial.suggest_int('learning_starts', int(2e4), int(2e5))
 
     train_env = make_vec_env(ENV, n_envs=N_ENVS, wrapper_class=wrap_env, env_kwargs=env_kwargs)
     train_env = VecTransposeImage(train_env)
@@ -68,7 +69,7 @@ def objective_dqn(trial):
         "CnnPolicy", train_env, batch_size=batch_size,
         learning_rate=learning_rate, gamma=gamma, exploration_final_eps=exploration_final_eps,
         exploration_fraction=exploration_fraction, buffer_size=buffer_size,
-        learning_starts=1e4, verbose=1, device='cuda'
+        learning_starts=learning_starts, verbose=1, device='cuda'
     )
 
     agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=evaluation_callback)
@@ -115,7 +116,7 @@ if __name__ == "__main__":
     # Optimize DQN
     if model == "dqn":
         dqn_study = optuna.create_study(direction='maximize')
-        dqn_study.optimize(objective_dqn, n_trials=50)
+        dqn_study.optimize(objective_dqn, n_trials=100)
         print(f'DQN Best trial: {dqn_study.best_trial.value}')
         print(f'DQN Best hyperparameters: {dqn_study.best_trial.params}')
 
