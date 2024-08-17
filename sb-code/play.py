@@ -14,10 +14,10 @@ ENV = "VizdoomMyWayHome-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "1"
+num = "2"
 map = "my-way-home"
-#MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
-MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
+MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
+#MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         return env
 
-    env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 1, "render_mode": "human"})
+    env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 4, "render_mode": "human"})
 
     # Load the trained agent
     if model == "dqn":

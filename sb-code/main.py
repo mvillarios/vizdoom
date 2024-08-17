@@ -46,7 +46,7 @@ MODEL_LIST = [
 RESOLUTION = (60, 45)
 TRAINING_TIMESTEPS = int(6e5)  # 600k 200k
 N_ENVS = 1
-FRAME_SKIP = 10
+FRAME_SKIP = 4
 
 old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
