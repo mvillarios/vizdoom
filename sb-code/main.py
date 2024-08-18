@@ -17,9 +17,9 @@ from utils import plot_rewards
 from params import DQN_PARAMS, PPO_PARAMS
 
 ENV_LIST = [
-    "VizdoomDefendCenter-v0", 
-    "VizdoomDefendLine-v0",
-    #"VizdoomCorridor-v0",
+    #"VizdoomDefendCenter-v0", 
+    #"VizdoomDefendLine-v0",
+    "VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
     # "VizdoomPredictPosition-v0",
@@ -28,9 +28,9 @@ ENV_LIST = [
 ]
 
 MAP_LIST = [
-    "defend-center",
-    "defend-line",
-    #"corridor",
+    #"defend-center",
+    #"defend-line",
+    "corridor",
     #"my-way-home",
     #"health-gathering",
     # "predict-position",
@@ -44,7 +44,7 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(3e5)  # 600k 200k
+TRAINING_TIMESTEPS = int(6e5)  # 600k 200k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -182,7 +182,7 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        #env = RewardShapingWrapper(env)
+        env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
