@@ -71,7 +71,7 @@ PPO_PARAMS = {
     "VizdoomCorridor-v0": {
         "n_steps": 2048,
         "batch_size": 64,
-        "learning_rate": 1.06e-5, # 0.00001
+        "learning_rate": 0.0001, # 0.00001
         "gamma": 0.9635,
         "gae_lambda": 0.879,
     },
