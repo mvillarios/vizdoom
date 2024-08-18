@@ -17,10 +17,10 @@ from utils import plot_rewards
 from params import DQN_PARAMS, PPO_PARAMS
 
 ENV_LIST = [
-    #"VizdoomDefendCenter-v0", 
+    "VizdoomDefendCenter-v0", 
     #"VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
-    "VizdoomMyWayHome-v0",
+    #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
     # "VizdoomPredictPosition-v0",
     # "VizdoomTakeCover-v0",
@@ -28,10 +28,10 @@ ENV_LIST = [
 ]
 
 MAP_LIST = [
-    #"defend-center",
+    "defend-center",
     #"defend-line",
     #"corridor",
-    "my-way-home",
+    #"my-way-home",
     #"health-gathering",
     # "predict-position",
     # "take-cover"
@@ -39,12 +39,12 @@ MAP_LIST = [
 ]
 
 MODEL_LIST = [
-    #"dqn",
-    "ppo"
+    "dqn",
+    #"ppo"
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(6e5)  # 600k 200k
+TRAINING_TIMESTEPS = int(3e5)  # 600k 200k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -52,7 +52,7 @@ old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "saves-tunning/corridor/ppo-3"
 
-num = 2
+num = 1
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
@@ -195,6 +195,10 @@ if __name__ == "__main__":
 
     start_index = 0
 
+    # Print steps and frame skip
+    print(f"Training steps: {TRAINING_TIMESTEPS}")
+    print(f"Frame skip: {FRAME_SKIP}")
+
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
             LOG_DIR = f"trains/{map_name}/{model}-{num}"
@@ -265,6 +269,9 @@ if __name__ == "__main__":
                 agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
                 agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
 
+                # Print parameters
+                print(f"Parameters: {params}")
+
             else:
                 params = PPO_PARAMS.get(env_name, {})
 
@@ -283,9 +290,12 @@ if __name__ == "__main__":
                         verbose=1,
                         device='cuda'
                     )
-
                 agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
                 agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+
+                # Print parameters
+                print(f"Parameters: {params}")
+                
 
             train_env.close()
             eval_env.close()

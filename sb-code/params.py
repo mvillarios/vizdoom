@@ -2,12 +2,14 @@
 DQN_PARAMS = {
     "VizdoomDefendCenter-v0": {
         "batch_size": 32,
-        "learning_rate": 4.61e-5,
-        "buffer_size": 53425,
+        "learning_rate": 0.0001,
+        "buffer_size": 15000,
         "gamma": 0.92,
         "exploration_fraction": 0.28,
         "exploration_final_eps": 0.016,
-        "learning_starts": 1e5,
+        "learning_starts": 1e4,
+        "decay_start_steps": 0,
+        "decay_end_steps": 1.5e5,
     },
     "VizdoomDefendLine-v0": {
         "batch_size": 64,
