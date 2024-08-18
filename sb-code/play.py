@@ -10,14 +10,14 @@ from gymnasium import RewardWrapper
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomMyWayHome-v0"
+ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
 num = "2"
-map = "my-way-home"
-MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
-#MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
+map = "corridor"
+#MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
+MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     def wrap_env(env):
         env = ObservationWrapper(env)
-        #env = RewardShapingWrapper(env)
+        env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         return env
 
