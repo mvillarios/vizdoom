@@ -57,14 +57,14 @@ PPO_PARAMS = {
     "VizdoomDefendCenter-v0": {
         "n_steps": 2048,
         "batch_size": 64,
-        "learning_rate": 7.4e-4,
+        "learning_rate": 0.0001,
         "gamma": 0.92,
         "gae_lambda": 0.95,
     },
     "VizdoomDefendLine-v0": {
         "n_steps": 2048,
-        "batch_size": 128,
-        "learning_rate": 0.00038,
+        "batch_size": 64,
+        "learning_rate": 0.0001,
         "gamma": 0.94,
         "gae_lambda": 0.93,
     },

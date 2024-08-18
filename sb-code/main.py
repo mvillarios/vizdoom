@@ -17,7 +17,7 @@ from utils import plot_rewards
 from params import DQN_PARAMS, PPO_PARAMS
 
 ENV_LIST = [
-    #"VizdoomDefendCenter-v0", 
+    "VizdoomDefendCenter-v0", 
     "VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
@@ -28,7 +28,7 @@ ENV_LIST = [
 ]
 
 MAP_LIST = [
-    #"defend-center",
+    "defend-center",
     "defend-line",
     #"corridor",
     #"my-way-home",
@@ -39,8 +39,8 @@ MAP_LIST = [
 ]
 
 MODEL_LIST = [
-    "dqn",
-    #"ppo"
+    #"dqn",
+    "ppo"
 ]
 
 RESOLUTION = (60, 45)
