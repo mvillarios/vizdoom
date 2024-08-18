@@ -12,13 +12,15 @@ DQN_PARAMS = {
         "decay_end_steps": 1.5e5,
     },
     "VizdoomDefendLine-v0": {
-        "batch_size": 64,
-        "learning_rate": 0.00013,
-        "buffer_size": 94702,
+        "batch_size": 32,
+        "learning_rate": 0.0001,
+        "buffer_size": 10000,
         "gamma": 0.97,
         "exploration_fraction": 0.15,
-        "exploration_final_eps": 0.042,
-        "learning_starts": 1e5,
+        "exploration_final_eps": 0.01,
+        "learning_starts": 1e4,
+        "decay_start_steps": 0,
+        "decay_end_steps": 1.5e5
     },
     "VizdoomCorridor-v0": {
         "batch_size": 64,

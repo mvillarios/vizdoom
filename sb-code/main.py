@@ -17,8 +17,8 @@ from utils import plot_rewards
 from params import DQN_PARAMS, PPO_PARAMS
 
 ENV_LIST = [
-    "VizdoomDefendCenter-v0", 
-    #"VizdoomDefendLine-v0",
+    #"VizdoomDefendCenter-v0", 
+    "VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
@@ -28,8 +28,8 @@ ENV_LIST = [
 ]
 
 MAP_LIST = [
-    "defend-center",
-    #"defend-line",
+    #"defend-center",
+    "defend-line",
     #"corridor",
     #"my-way-home",
     #"health-gathering",
@@ -195,10 +195,6 @@ if __name__ == "__main__":
 
     start_index = 0
 
-    # Print steps and frame skip
-    print(f"Training steps: {TRAINING_TIMESTEPS}")
-    print(f"Frame skip: {FRAME_SKIP}")
-
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
             LOG_DIR = f"trains/{map_name}/{model}-{num}"
@@ -295,8 +291,10 @@ if __name__ == "__main__":
 
                 # Print parameters
                 print(f"Parameters: {params}")
-                
 
+            # Print steps and frame skip
+            print(f"Training steps: {TRAINING_TIMESTEPS}")
+            print(f"Frame skip: {FRAME_SKIP}")
             train_env.close()
             eval_env.close()
 
