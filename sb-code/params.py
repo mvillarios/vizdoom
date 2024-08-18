@@ -69,9 +69,9 @@ PPO_PARAMS = {
         "gae_lambda": 0.93,
     },
     "VizdoomCorridor-v0": {
-        "n_steps": 2048,
+        "n_steps": 1024,
         "batch_size": 64,
-        "learning_rate": 0.0001, # 0.00001
+        "learning_rate": 0.001, # 0.00001
         "gamma": 0.9635,
         "gae_lambda": 0.879,
     },
@@ -83,9 +83,9 @@ PPO_PARAMS = {
         "gae_lambda": 0.8147,
     },
     "VizdoomHealthGathering-v0": {
-        "n_steps": 4096,
-        "batch_size": 32,
-        "learning_rate": 0.0002044,
+        "n_steps": 2048,
+        "batch_size": 64,
+        "learning_rate": 0.00001,
         "gamma": 0.9893,
         "gae_lambda": 0.8687,
     },
