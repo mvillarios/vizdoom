@@ -50,9 +50,9 @@ FRAME_SKIP = 4
 
 old_save = True
 old_dir_dqn = "trains/corridor/dqn-5"
-old_dir_ppo = "trains/corridor/ppo-2"
+old_dir_ppo = "trains/corridor/ppo-5"
 
-num = 3
+num = 6
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
