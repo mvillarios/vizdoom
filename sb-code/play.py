@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 import gymnasium as gym
@@ -110,6 +111,13 @@ if __name__ == "__main__":
         agent = DQN.load(MODEL_PATH, print_system_info=True)
     else:
         agent = PPO.load(MODEL_PATH, print_system_info=True)
+
+    os.system("clear")
+
+    # print env and num
+    print(f"Env: {ENV}")
+    print(f"Model: {model}")
+    print(f"Num: {num}")
 
     episode = 0
     for _ in range(50):
