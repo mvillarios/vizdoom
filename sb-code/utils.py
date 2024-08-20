@@ -146,8 +146,8 @@ def plot_comparison(log_dir1, log_dir2, window=10):
 
     ax1.set_xlabel('Episode')
     ax1.set_ylabel('Reward')
-    ax1.plot(range(len(smoothed_rewards1)), smoothed_rewards1, color='tab:blue', linestyle='-', label='DQN')
     ax1.plot(range(len(smoothed_rewards2)), smoothed_rewards2, color='tab:orange', linestyle='-', label='PPO')
+    ax1.plot(range(len(smoothed_rewards1)), smoothed_rewards1, color='tab:blue', linestyle='-', label='DQN')
 
     ax1.legend(loc='upper right')
     plt.tight_layout()

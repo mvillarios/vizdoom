@@ -15,7 +15,7 @@ ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "2"
+num = "8"
 map = "corridor"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     def wrap_env(env):
         env = ObservationWrapper(env)
-        env = RewardShapingWrapper(env)
+        #env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         return env
 
