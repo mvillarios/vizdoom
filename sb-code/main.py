@@ -44,18 +44,18 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(3e5)  # 600k 200k
+TRAINING_TIMESTEPS = int(5e5)  # 600k 200k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-old_save = True
+old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = 8
+num = 11
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=500, hit_taken_penalty=-10, ammo_penalty=-5):
+    def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
@@ -182,7 +182,7 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        #env = RewardShapingWrapper(env)
+        env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
