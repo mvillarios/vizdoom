@@ -55,7 +55,7 @@ old_dir_ppo = "trains/corridor/ppo-5"
 num = 6
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
+    def __init__(self, env, damage_reward=500, hit_taken_penalty=-10, ammo_penalty=-5):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
