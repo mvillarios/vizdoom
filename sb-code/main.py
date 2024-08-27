@@ -19,32 +19,32 @@ from params import DQN_PARAMS, PPO_PARAMS
 ENV_LIST = [
     #"VizdoomDefendCenter-v0", 
     #"VizdoomDefendLine-v0",
-    "VizdoomCorridor-v0",
+    #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
-    # "VizdoomPredictPosition-v0",
-    # "VizdoomTakeCover-v0",
+    "VizdoomPredictPosition-v0",
+    "VizdoomTakeCover-v0",
     # "VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
     #"defend-center",
     #"defend-line",
-    "corridor",
+    #"corridor",
     #"my-way-home",
     #"health-gathering",
-    # "predict-position",
-    # "take-cover"
+    "predict-position",
+    "take-cover"
     # "deathmatch",
 ]
 
 MODEL_LIST = [
-    #"dqn",
+    "dqn",
     "ppo"
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(5e5)  # 600k 200k
+TRAINING_TIMESTEPS = int(3e5)  # 600k 200k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -52,7 +52,7 @@ old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = 11
+num = 1
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
@@ -182,7 +182,7 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        env = RewardShapingWrapper(env)
+        #env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
