@@ -40,7 +40,7 @@ MAP_LIST = [
 
 MODEL_LIST = [
     "dqn",
-    "ppo"
+    #"ppo"
 ]
 
 RESOLUTION = (60, 45)
@@ -52,7 +52,7 @@ old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = 1
+num = 3
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):

@@ -11,12 +11,12 @@ from gymnasium import RewardWrapper
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomCorridor-v0"
+ENV = "VizdoomPredictPosition-v0"
 RESOLUTION = (60, 45)
 
-model = "ppo"
-num = "8"
-map = "corridor"
+model = "dqn"
+num = "3"
+map = "predict-position"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
