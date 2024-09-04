@@ -60,18 +60,18 @@ DQN_PARAMS = {
         "exploration_final_eps": 0.001,
         "learning_starts": 4e4,
         "decay_start_steps": 4e4,
-        "decay_end_steps": 2e5,
+        "decay_end_steps": 3.5e5,
     },
     "VizdoomTakeCover-v0": {
         "batch_size": 64,
         "learning_rate": 0.0001,
         "buffer_size": 15000,
-        "gamma": 0.957,
+        "gamma": 0.98,
         "exploration_fraction": 0.4,
         "exploration_final_eps": 0.001,
         "learning_starts": 4e4,
         "decay_start_steps": 4e4,
-        "decay_end_steps": 2e5,
+        "decay_end_steps": 3e5,
     }
 }
 
@@ -114,7 +114,7 @@ PPO_PARAMS = {
     "VizdoomPredictPosition-v0": {
         "n_steps": 2048,
         "batch_size": 64,
-        "learning_rate": 0.00001,
+        "learning_rate": 0.0001,
         "gamma": 0.94,
         "gae_lambda": 0.93,
     },

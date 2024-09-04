@@ -22,7 +22,7 @@ ENV_LIST = [
     #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
-    "VizdoomPredictPosition-v0",
+    #"VizdoomPredictPosition-v0",
     "VizdoomTakeCover-v0",
     # "VizdoomDeathmatch-v0",
 ]
@@ -33,14 +33,14 @@ MAP_LIST = [
     #"corridor",
     #"my-way-home",
     #"health-gathering",
-    "predict-position",
+    #"predict-position",
     "take-cover"
     # "deathmatch",
 ]
 
 MODEL_LIST = [
     "dqn",
-    #"ppo"
+    "ppo"
 ]
 
 RESOLUTION = (60, 45)
