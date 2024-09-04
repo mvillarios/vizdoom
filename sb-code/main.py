@@ -52,7 +52,7 @@ old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = 4
+num = 5
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
@@ -198,104 +198,100 @@ if __name__ == "__main__":
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
             LOG_DIR = f"trains/{map_name}/{model}-{num}"
-            env_wrapper_train = EnvWrapper(log_dir=f"{LOG_DIR}/train_monitor.csv")
-            env_wrapper_eval = EnvWrapper(log_dir=f"{LOG_DIR}/eval_monitor.csv")
+            log_file_path = f"{LOG_DIR}/training_log.txt"  # Guardar el log en el mismo directorio que LOG_DIR
+            
+            with open(log_file_path, 'w') as log_file:
+                env_wrapper_train = EnvWrapper(log_dir=f"{LOG_DIR}/train_monitor.csv")
+                env_wrapper_eval = EnvWrapper(log_dir=f"{LOG_DIR}/eval_monitor.csv")
 
-            train_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper_train, env_kwargs=env_kwargs)
-            train_env = VecTransposeImage(train_env)
+                train_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper_train, env_kwargs=env_kwargs)
+                train_env = VecTransposeImage(train_env)
 
-            eval_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper_eval, env_kwargs=env_kwargs)
-            eval_env = VecTransposeImage(eval_env)
+                eval_env = make_vec_env(env_name, n_envs=N_ENVS, wrapper_class=env_wrapper_eval, env_kwargs=env_kwargs)
+                eval_env = VecTransposeImage(eval_env)
 
-            #stop_train_callback  = callbacks.StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=1000)
-            #callback_on_best = callbacks.StopTrainingOnRewardThreshold(reward_threshold=2000, verbose=1)
-
-            evaluation_callback = callbacks.EvalCallback(
-                eval_env,
-                best_model_save_path=f"{LOG_DIR}/models",
-                log_path=f"{LOG_DIR}/eval",
-                eval_freq=500,
-                render=False,
-                n_eval_episodes=50,
-                #callback_after_eval=stop_train_callback,
-                #callback_on_new_best=callback_on_best
-            )
-
-            if model == "dqn":
-                params = DQN_PARAMS.get(env_name, {})
-
-                total_steps = TRAINING_TIMESTEPS
-                initial_epsilon = 1.0
-                final_epsilon = params.get("exploration_final_eps", 0.05)
-                exploration_fraction = params.get("exploration_fraction", 0.1)
-                learning_starts = params.get("learning_starts", 1000)
-                decay_start_steps = params.get("decay_start_steps", 0)
-                decay_end_steps = params.get("decay_end_steps", total_steps)
-
-                # Ajustar la función epsilon_schedule_fn con el nuevo parámetro
-                epsilon_schedule_fn = custom_epsilon_schedule(
-                    initial_epsilon=initial_epsilon,
-                    final_epsilon=final_epsilon,
-                    decay_start_steps=decay_start_steps,
-                    decay_end_steps=decay_end_steps
+                evaluation_callback = callbacks.EvalCallback(
+                    eval_env,
+                    best_model_save_path=f"{LOG_DIR}/models",
+                    log_path=f"{LOG_DIR}/eval",
+                    eval_freq=500,
+                    render=False,
+                    n_eval_episodes=50,
                 )
 
-                if old_save:
-                    agent = DQN.load(f"{old_dir_dqn}/saves/dqn_vizdoom", train_env)
-                else:
-                    agent = DQN(
-                        "CnnPolicy",
-                        train_env,
-                        batch_size=params.get("batch_size", 64),
-                        learning_rate=params.get("learning_rate", 0.0001),
-                        buffer_size=params.get("buffer_size", 50000),
-                        gamma=params.get("gamma", 0.99),
-                        exploration_initial_eps=initial_epsilon,
-                        exploration_final_eps=final_epsilon,
-                        exploration_fraction=exploration_fraction,
-                        learning_starts=learning_starts,
-                        verbose=1,
-                        device='cuda'
+                if model == "dqn":
+                    params = DQN_PARAMS.get(env_name, {})
+
+                    total_steps = TRAINING_TIMESTEPS
+                    initial_epsilon = 1.0
+                    final_epsilon = params.get("exploration_final_eps", 0.05)
+                    exploration_fraction = params.get("exploration_fraction", 0.1)
+                    learning_starts = params.get("learning_starts", 1000)
+                    decay_start_steps = params.get("decay_start_steps", 0)
+                    decay_end_steps = params.get("decay_end_steps", total_steps)
+
+                    epsilon_schedule_fn = custom_epsilon_schedule(
+                        initial_epsilon=initial_epsilon,
+                        final_epsilon=final_epsilon,
+                        decay_start_steps=decay_start_steps,
+                        decay_end_steps=decay_end_steps
                     )
+
+                    if old_save:
+                        agent = DQN.load(f"{old_dir_dqn}/saves/dqn_vizdoom", train_env)
+                    else:
+                        agent = DQN(
+                            "CnnPolicy",
+                            train_env,
+                            batch_size=params.get("batch_size", 64),
+                            learning_rate=params.get("learning_rate", 0.0001),
+                            buffer_size=params.get("buffer_size", 50000),
+                            gamma=params.get("gamma", 0.99),
+                            exploration_initial_eps=initial_epsilon,
+                            exploration_final_eps=final_epsilon,
+                            exploration_fraction=exploration_fraction,
+                            learning_starts=learning_starts,
+                            verbose=1,
+                            device='cuda'
+                        )
+                        
+                    agent.exploration_schedule = epsilon_schedule_fn
+
+                    epsilon_logger = EpsilonLogger(LOG_DIR)
                     
-                agent.exploration_schedule = epsilon_schedule_fn
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
+                    agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
 
-                epsilon_logger = EpsilonLogger(LOG_DIR)
-                
-                agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
-                agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
+                    log_file.write(f"Parameters: {params}\n")
 
-                # Print parameters
-                print(f"Parameters: {params}")
-
-            else:
-                params = PPO_PARAMS.get(env_name, {})
-
-                if old_save:
-                    agent = PPO.load(f"{old_dir_ppo}/models/best_model", train_env)
                 else:
-                    agent = PPO(
-                        "CnnPolicy",
-                        train_env,
-                        n_steps=params.get("n_steps", 2048),
-                        batch_size=params.get("batch_size", 64),
-                        learning_rate=params.get("learning_rate", 3e-4),
-                        #gamma=params.get("gamma", 0.99),
-                        #gae_lambda=params.get("gae_lambda", 0.95),
-                        #clip_range=params.get("clip_range", 0.2),
-                        verbose=1,
-                        device='cuda'
-                    )
-                agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
-                agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+                    params = PPO_PARAMS.get(env_name, {})
 
-                # Print parameters
-                print(f"Parameters: {params}")
+                    if old_save:
+                        agent = PPO.load(f"{old_dir_ppo}/models/best_model", train_env)
+                    else:
+                        agent = PPO(
+                            "CnnPolicy",
+                            train_env,
+                            n_steps=params.get("n_steps", 2048),
+                            batch_size=params.get("batch_size", 64),
+                            learning_rate=params.get("learning_rate", 3e-4),
+                            verbose=1,
+                            device='cuda'
+                        )
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+                    agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
 
-            # Print steps and frame skip
-            print(f"Training steps: {TRAINING_TIMESTEPS}")
-            print(f"Frame skip: {FRAME_SKIP}")
-            train_env.close()
-            eval_env.close()
+                    log_file.write(f"Parameters: {params}\n")
 
-            plot_rewards(LOG_DIR, model)
+                log_file.write(f"Training steps: {TRAINING_TIMESTEPS}\n")
+                log_file.write(f"Frame skip: {FRAME_SKIP}\n")
+                log_file.write(f"Model: {model}-{num}\n")
+                
+                train_env.close()
+                eval_env.close()
+
+                plot_rewards(LOG_DIR, model)
+
+
+
