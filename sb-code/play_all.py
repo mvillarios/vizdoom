@@ -14,15 +14,26 @@ import vizdoom.gymnasium_wrapper
 from utils import plot_results
 
 
-# Lista de entornos y mapas
 ENV_LIST = [
+    #"VizdoomDefendCenter-v0", 
+    #"VizdoomDefendLine-v0",
+    #"VizdoomCorridor-v0",
+    #"VizdoomMyWayHome-v0",
+    "VizdoomHealthGathering-v0"
     #"VizdoomPredictPosition-v0",
-    "VizdoomTakeCover-v0",
+    #"VizdoomTakeCover-v0",
+    # "VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
+    #"defend-center",
+    #"defend-line",
+    #"corridor",
+    #"my-way-home",
+    "health-gathering",
     #"predict-position",
-    "take-cover",
+    #"take-cover"
+    # "deathmatch",
 ]
 
 MODEL_LIST = [
@@ -33,13 +44,14 @@ MODEL_LIST = [
 
 # Diccionario de modelos específicos para cada algoritmo, incluyendo el número de modelo y la subcarpeta del modelo
 MODEL_PATHS = {
-    #"dqn": {"model": "dqn_vizdoom", "num": 3, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
-    "dqn": {"model": "best_model", "num": 3, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
-    "ppo": {"model": "best_model", "num": 6, "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
+    #"dqn": {"model": "dqn_vizdoom", "num": 1, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
+    #"ppo": {"model": "ppo_vizdoom", "num": 2, "subfolder": "saves"},
+    "dqn": {"model": "best_model", "num": 1, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
+    "ppo": {"model": "best_model", "num": 1, "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
 }
 
 RESOLUTION = (60, 45)
-FRAME_SKIP = 4
+FRAME_SKIP = 10
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
