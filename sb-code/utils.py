@@ -260,7 +260,7 @@ def read_scores(file_path):
     return pd.DataFrame(data, columns=['Episode', 'Score'])
 
 # Función para graficar la comparación de los tres modelos
-def plot_results(map_dir, window=10):
+def plot_results(map_dir, window=100):
     # Construir los nombres de archivo de puntuaciones para cada modelo
     ppo_file = os.path.join(map_dir, 'puntajes_ppo.txt')
     dqn_file = os.path.join(map_dir, 'puntajes_dqn.txt')
@@ -286,9 +286,9 @@ def plot_results(map_dir, window=10):
     ax1.set_ylabel('Reward')
     
     # Graficar puntajes suavizados para cada modelo
-    ax1.plot(range(len(ppo_smoothed)), ppo_smoothed, color='tab:orange', linestyle='-', label='PPO')
-    ax1.plot(range(len(dqn_smoothed)), dqn_smoothed, color='tab:blue', linestyle='-', label='DQN')
-    ax1.plot(range(len(random_smoothed)), random_smoothed, color='tab:green', linestyle='-', label='Random')
+    ax1.plot(range(len(ppo_smoothed)), ppo_smoothed, color='tab:orange', alpha=0.8, linestyle='-', label='PPO')
+    ax1.plot(range(len(dqn_smoothed)), dqn_smoothed, color='tab:blue', alpha=0.8, linestyle='-', label='DQN')
+    ax1.plot(range(len(random_smoothed)), random_smoothed, color='tab:green', alpha=0.8, linestyle='-', label='Random')
 
     # Añadir leyenda y ajustar diseño
     ax1.legend(loc='upper right')
