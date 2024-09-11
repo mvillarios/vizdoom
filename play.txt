@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/mnt/c/Proyecto/sb-code/play_all.py", line 5, in <module>
+    from stable_baselines3 import DQN, PPO
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/__init__.py", line 3, in <module>
+    from stable_baselines3.a2c import A2C
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/a2c/__init__.py", line 1, in <module>
+    from stable_baselines3.a2c.a2c import A2C
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/a2c/a2c.py", line 7, in <module>
+    from stable_baselines3.common.buffers import RolloutBuffer
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/buffers.py", line 16, in <module>
+    from stable_baselines3.common.utils import get_device
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/utils.py", line 20, in <module>
+    from torch.utils.tensorboard import SummaryWriter
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/torch/utils/tensorboard/__init__.py", line 12, in <module>
+    from .writer import FileWriter, SummaryWriter  # noqa: F401
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/torch/utils/tensorboard/writer.py", line 15, in <module>
+    from tensorboard.summary.writer.event_file_writer import EventFileWriter
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/tensorboard/summary/__init__.py", line 22, in <module>
+    from tensorboard.summary import v1  # noqa: F401
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/tensorboard/summary/v1.py", line 21, in <module>
+    from tensorboard.plugins.audio import summary as _audio_summary
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/tensorboard/plugins/audio/summary.py", line 34, in <module>
+    from tensorboard.plugins.audio import metadata
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/tensorboard/plugins/audio/metadata.py", line 19, in <module>
+    from tensorboard.plugins.audio import plugin_data_pb2
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 879, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 975, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_data
+KeyboardInterrupt

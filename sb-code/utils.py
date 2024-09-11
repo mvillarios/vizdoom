@@ -235,3 +235,68 @@ def plot_epsilon(log_dir):
 
     plt.savefig(os.path.join(log_dir, 'epsilon.png'))
     plt.close()
+
+# Función para leer los puntajes desde el archivo .txt
+def read_scores(file_path):
+    data = []
+    try:
+        with open(file_path, 'r') as file:
+            for line in file.readlines()[1:]:  # Saltar la primera línea (cabecera)
+                try:
+                    episode, score = line.split(',')
+                    score = float(score.strip().replace('[', '').replace(']', ''))  # Limpiar el formato de score
+                    data.append((int(episode), score))
+                except ValueError as e:
+                    print(f"Skipping malformed line: {line.strip()} (Error: {e})")
+                    continue  # Saltar filas malformadas
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        return None
+
+    if not data:
+        print("No valid data found in the file.")
+        return None
+
+    return pd.DataFrame(data, columns=['Episode', 'Score'])
+
+# Función para graficar la comparación de los tres modelos
+def plot_results(map_dir, window=10):
+    # Construir los nombres de archivo de puntuaciones para cada modelo
+    ppo_file = os.path.join(map_dir, 'puntajes_ppo.txt')
+    dqn_file = os.path.join(map_dir, 'puntajes_dqn.txt')
+    random_file = os.path.join(map_dir, 'puntajes_random.txt')
+
+    # Leer puntajes de los archivos
+    ppo_scores = read_scores(ppo_file)
+    dqn_scores = read_scores(dqn_file)
+    random_scores = read_scores(random_file)
+
+    if ppo_scores is None or dqn_scores is None or random_scores is None:
+        return
+
+    # Suavizar los puntajes
+    ppo_smoothed = smooth_rewards(ppo_scores['Score'].to_numpy(), window)
+    dqn_smoothed = smooth_rewards(dqn_scores['Score'].to_numpy(), window)
+    random_smoothed = smooth_rewards(random_scores['Score'].to_numpy(), window)
+
+    # Crear el gráfico
+    fig, ax1 = plt.subplots()
+
+    ax1.set_xlabel('Episode')
+    ax1.set_ylabel('Reward')
+    
+    # Graficar puntajes suavizados para cada modelo
+    ax1.plot(range(len(ppo_smoothed)), ppo_smoothed, color='tab:orange', linestyle='-', label='PPO')
+    ax1.plot(range(len(dqn_smoothed)), dqn_smoothed, color='tab:blue', linestyle='-', label='DQN')
+    ax1.plot(range(len(random_smoothed)), random_smoothed, color='tab:green', linestyle='-', label='Random')
+
+    # Añadir leyenda y ajustar diseño
+    ax1.legend(loc='upper right')
+    plt.tight_layout()
+
+    plt.grid()
+
+    # Guardar la gráfica en el directorio del mapa
+    comparison_file = os.path.join(map_dir, 'comparison_reward.png')
+    plt.savefig(comparison_file)
+    plt.close()
