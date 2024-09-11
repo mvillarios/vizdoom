@@ -171,7 +171,7 @@ if __name__ == "__main__":
                 f.write("Episodio,Puntaje\n")  # Encabezado del archivo
 
                 # Ejecuta 50 episodios por cada mapa y modelo
-                for _ in range(50):
+                for _ in range(5000):
                     obs = env.reset()
                     done = False
                     total_reward = 0
