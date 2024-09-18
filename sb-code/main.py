@@ -22,9 +22,9 @@ ENV_LIST = [
     #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
-    "VizdoomPredictPosition-v0",
+    #"VizdoomPredictPosition-v0",
     #"VizdoomTakeCover-v0",
-    # "VizdoomDeathmatch-v0",
+    "VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
@@ -33,9 +33,9 @@ MAP_LIST = [
     #"corridor",
     #"my-way-home",
     #"health-gathering",
-    "predict-position",
+    #"predict-position",
     #"take-cover"
-    # "deathmatch",
+    "deathmatch",
 ]
 
 MODEL_LIST = [
@@ -44,7 +44,7 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(5e5)  # 600k 200k
+TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -52,7 +52,7 @@ old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = 6
+num = 1
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
