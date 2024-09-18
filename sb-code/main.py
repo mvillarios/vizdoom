@@ -198,6 +198,10 @@ if __name__ == "__main__":
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
             LOG_DIR = f"trains/{map_name}/{model}-{num}"
+
+            if not os.path.exists(LOG_DIR):
+                os.makedirs(LOG_DIR)
+
             log_file_path = f"{LOG_DIR}/training_log.txt"  # Guardar el log en el mismo directorio que LOG_DIR
             
             with open(log_file_path, 'w') as log_file:
