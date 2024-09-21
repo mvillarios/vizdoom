@@ -167,14 +167,14 @@ if __name__ == "__main__":
         # Optimize DQN
         if model == "dqn":
             dqn_study = optuna.create_study(direction='maximize')
-            dqn_study.optimize(objective_dqn, n_trials=50)
+            dqn_study.optimize(objective_dqn, n_trials=25)
             f.write(f'DQN Best trial: {dqn_study.best_trial.value}\n')
             f.write(f'DQN Best hyperparameters: {dqn_study.best_trial.params}\n')
 
         # Optimize PPO
         if model == "ppo":
             ppo_study = optuna.create_study(direction='maximize')
-            ppo_study.optimize(objective_ppo, n_trials=50)
+            ppo_study.optimize(objective_ppo, n_trials=25)
             f.write(f'PPO Best trial: {ppo_study.best_trial.value}\n')
             f.write(f'PPO Best hyperparameters: {ppo_study.best_trial.params}\n')
 

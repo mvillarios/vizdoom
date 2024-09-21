@@ -1,4 +1,4 @@
-
+{'batch_size': 64, 'learning_rate': 1.806713730745409e-05, 'buffer_size': 2976, 'gamma': 0.9662576135989361, 'exploration_fraction': 0.17933658535619554, 'exploration_final_eps': 0.04686741404379312, 'decay_start_steps': 0.35828316758682666, 'decay_end_steps': 0.7518853888976003}
 DQN_PARAMS = {
     "VizdoomDefendCenter-v0": {
         "batch_size": 32,
@@ -43,13 +43,14 @@ DQN_PARAMS = {
         "learning_starts": 100000,
     },
     "VizdoomHealthGathering-v0": {
-        "batch_size": 64,
-        "learning_rate": 0.00001,
-        "buffer_size": 10000,
-        "gamma": 1,
-        "exploration_fraction": 0.1524,
-        "exploration_final_eps": 0.1,
-        "learning_starts": 1e4,
+        'batch_size': 64, 
+        'learning_rate': 1.806713730745409e-05, 
+        'buffer_size': 2976, 
+        'gamma': 0.9662576135989361, 
+        'exploration_fraction': 0.17933658535619554, 
+        'exploration_final_eps': 0.04686741404379312, 
+        'decay_start_steps': 0.35828316758682666, 
+        'decay_end_steps': 0.7518853888976003
     },
     "VizdoomPredictPosition-v0": {
         "batch_size": 64,
@@ -85,6 +86,9 @@ DQN_PARAMS = {
         "decay_end_steps": 7e5,
     },
 }
+
+
+
 
 PPO_PARAMS = {
     "VizdoomDefendCenter-v0": {

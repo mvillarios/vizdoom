@@ -21,10 +21,10 @@ ENV_LIST = [
     #"VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
-    #"VizdoomHealthGathering-v0"
+    "VizdoomHealthGathering-v0"
     #"VizdoomPredictPosition-v0",
     #"VizdoomTakeCover-v0",
-    "VizdoomDeathmatch-v0",
+    #"VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
@@ -32,19 +32,19 @@ MAP_LIST = [
     #"defend-line",
     #"corridor",
     #"my-way-home",
-    #"health-gathering",
+    "health-gathering",
     #"predict-position",
     #"take-cover"
-    "deathmatch",
+    #"deathmatch",
 ]
 
 MODEL_LIST = [
     "dqn",
-    "ppo"
+    #"ppo"
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(3e5)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -237,8 +237,8 @@ if __name__ == "__main__":
                     epsilon_schedule_fn = custom_epsilon_schedule(
                         initial_epsilon=initial_epsilon,
                         final_epsilon=final_epsilon,
-                        decay_start_steps=decay_start_steps,
-                        decay_end_steps=decay_end_steps
+                        decay_start_steps=decay_start_steps * total_steps,
+                        decay_end_steps=decay_end_steps * total_steps
                     )
 
                     if old_save:
