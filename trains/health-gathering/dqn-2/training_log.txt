@@ -1,0 +1,4 @@
+Parameters: {'batch_size': 64, 'learning_rate': 1.806713730745409e-05, 'buffer_size': 2976, 'gamma': 0.9662576135989361, 'exploration_fraction': 0.17933658535619554, 'exploration_final_eps': 0.04686741404379312, 'decay_start_steps': 0.35828316758682666, 'decay_end_steps': 0.7518853888976003}
+Training steps: 300000
+Frame skip: 4
+Model: dqn-2
