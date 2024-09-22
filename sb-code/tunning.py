@@ -12,7 +12,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomHealthGathering-v0"
+ENV = "VizdoomMyWayHome-v0"
 RESOLUTION = (60, 45)
 TRAINING_TIMESTEPS = int(3e5)# 300000
 N_ENVS = 1
@@ -20,7 +20,7 @@ FRAME_SKIP = 4
 
 model = "dqn"
 num = "1"
-map = "health_gathering"
+map = "my-way-home"
 
 LOG_DIR = f"tunning/{map}/{model}-{num}"
 
