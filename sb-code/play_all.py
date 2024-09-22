@@ -44,10 +44,10 @@ MODEL_LIST = [
 
 # Diccionario de modelos específicos para cada algoritmo, incluyendo el número de modelo y la subcarpeta del modelo
 MODEL_PATHS = {
-    "dqn": {"model": "dqn_vizdoom", "num": 1, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
-    "ppo": {"model": "ppo_vizdoom", "num": 1, "subfolder": "saves"},
-    #"dqn": {"model": "best_model", "num": 1, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
-    #"ppo": {"model": "best_model", "num": 1, "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
+    #"dqn": {"model": "dqn_vizdoom", "num": 1, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
+    #"ppo": {"model": "ppo_vizdoom", "num": 1, "subfolder": "saves"},
+    "dqn": {"model": "best_model", "num": 1, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
+    "ppo": {"model": "best_model", "num": 1, "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
 }
 
 RESOLUTION = (60, 45)
