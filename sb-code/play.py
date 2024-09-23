@@ -11,12 +11,12 @@ from gymnasium import RewardWrapper
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomTakeCover-v0"
+ENV = "VizdoomDeathmatch-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "6"
-map = "take-cover"
+num = "1"
+map = "deathmatch"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
