@@ -280,6 +280,13 @@ if __name__ == "__main__":
                             n_steps=params.get("n_steps", 2048),
                             batch_size=params.get("batch_size", 64),
                             learning_rate=params.get("learning_rate", 3e-4),
+                            gamma=params.get("gamma", 0.99),
+                            gae_lambda=params.get("gae_lambda", 0.95),
+                            clip_range=params.get("clip_range", 0.2),
+                            ent_coef=params.get("ent_coef", 0.0),
+                            vf_coef=params.get("vf_coef", 0.5),
+                            clip_range_vf=params.get("clip_range_vf", None),
+                            target_kl=params.get("target_kl", 0.01),
                             verbose=1,
                             device='cuda'
                         )

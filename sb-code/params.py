@@ -80,9 +80,9 @@ DQN_PARAMS = {
         "gamma": 0.98,
         "exploration_fraction": 0.4,
         "exploration_final_eps": 0.001,
-        "learning_starts": 2e5,
-        "decay_start_steps": 2e5,
-        "decay_end_steps": 7e5,
+        "learning_starts": 1e5,
+        "decay_start_steps": 0.1,
+        "decay_end_steps": 0.6,
     },
 }
 
@@ -145,6 +145,11 @@ PPO_PARAMS = {
         "learning_rate": 0.0001,
         "gamma": 0.94,
         "gae_lambda": 0.93,
+        "clip_range": 0.2,
+        "ent_coef": 0.0001,
+        "vf_coef": 0.5,
+        "clip_range_vf": 0.2,
+        "target_kl": 0.01,
     },
 
 }
