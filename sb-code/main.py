@@ -40,7 +40,7 @@ MAP_LIST = [
 
 MODEL_LIST = [
     "dqn",
-    "ppo"
+    #"ppo"
 ]
 
 RESOLUTION = (60, 45)
