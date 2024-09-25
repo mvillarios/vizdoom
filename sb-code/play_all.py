@@ -46,12 +46,12 @@ MODEL_LIST = [
 MODEL_PATHS = {
     #"dqn": {"model": "dqn_vizdoom", "num": 1, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
     #"ppo": {"model": "ppo_vizdoom", "num": 1, "subfolder": "saves"},
-    "dqn": {"model": "best_model", "num": 1, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
-    "ppo": {"model": "best_model", "num": 1, "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
+    "dqn": {"model": "best_model", "num": "2-btn(menos)-fs(7)-steps(1000000)", "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
+    "ppo": {"model": "best_model", "num": "2-btn(menos)-fs(7)-steps(1000000)", "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
 }
 
 RESOLUTION = (60, 45)
-FRAME_SKIP = 4
+FRAME_SKIP = 7
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
