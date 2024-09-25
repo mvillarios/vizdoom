@@ -75,19 +75,16 @@ DQN_PARAMS = {
     },
     "VizdoomDeathmatch-v0": {
         "batch_size": 64,
-        "learning_rate": 0.0001,
+        "learning_rate": 0.001,
         "buffer_size": 15000,
         "gamma": 0.98,
         "exploration_fraction": 0.4,
-        "exploration_final_eps": 0.001,
-        "learning_starts": 1e5,
-        "decay_start_steps": 0.1,
+        "exploration_final_eps": 0.01,
+        "learning_starts": 6e5,
+        "decay_start_steps": 0.2,
         "decay_end_steps": 0.6,
     },
 }
-
-
-
 
 PPO_PARAMS = {
     "VizdoomDefendCenter-v0": {

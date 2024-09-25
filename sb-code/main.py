@@ -39,14 +39,14 @@ MAP_LIST = [
 ]
 
 MODEL_LIST = [
-    #"dqn",
-    "ppo"
+    "dqn",
+    #"ppo"
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(3e6)  # 600k 200k 1000k
 N_ENVS = 1
-FRAME_SKIP = 7
+FRAME_SKIP = 4
 
 old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
