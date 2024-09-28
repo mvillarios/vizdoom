@@ -74,15 +74,15 @@ DQN_PARAMS = {
         "decay_end_steps": 3e5,
     },
     "VizdoomDeathmatch-v0": {
-        "batch_size": 64,
+        "batch_size": 32,
         "learning_rate": 0.001,
-        "buffer_size": 15000,
-        "gamma": 0.98,
-        "exploration_fraction": 0.4,
-        "exploration_final_eps": 0.01,
-        "learning_starts": 6e5,
-        "decay_start_steps": 0.2,
-        "decay_end_steps": 0.6,
+        "buffer_size": 500000,
+        "gamma": 0.99,
+        #"exploration_fraction": 0.4,
+        "exploration_final_eps": 0.05,
+        "learning_starts": 10000,
+        "decay_start_steps": 0,
+        "decay_end_steps": 0.1,
     },
 }
 

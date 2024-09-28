@@ -44,7 +44,7 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(3e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(1e7)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -115,6 +115,63 @@ class RewardShapingWrapper(RewardWrapper):
         #print(f"Reward custom: {custom_reward}")
         return custom_reward
 
+class RewardShapingWrapperDeathMatch(RewardWrapper):
+    def __init__(self, env, item_reward=0.1, hit_reward=0.1, kill_reward=1.0):
+        super(RewardShapingWrapperDeathMatch, self).__init__(env)
+        self.item_reward = item_reward
+        self.hit_reward = hit_reward
+        self.kill_reward = kill_reward
+        self.previous_itemcount = 0
+        self.previous_hitcount = 0
+        self.previous_killcount = 0
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        game_variables = self.env.unwrapped.game.get_state().game_variables
+
+        # Reiniciar las variables necesarias
+        self.previous_itemcount = game_variables[5]  # ITEMCOUNT
+        self.previous_hitcount = game_variables[6]   # HITCOUNT
+        self.previous_killcount = game_variables[0]  # KILLCOUNT
+
+        return obs, info
+
+    def reward(self, reward):
+        custom_reward = reward
+        game_state = self.env.unwrapped.game.get_state()
+
+        if game_state:
+            game_variables = game_state.game_variables
+            current_itemcount = game_variables[5]  # ITEMCOUNT
+            current_hitcount = game_variables[6]   # HITCOUNT
+            current_killcount = game_variables[0]  # KILLCOUNT
+
+            # Recompensa por recoger un ítem
+            if current_itemcount > self.previous_itemcount:
+                item_delta = current_itemcount - self.previous_itemcount
+                reward_gain = item_delta * self.item_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por ítem: {reward_gain}, Ítems recogidos: {item_delta}, Recompensa actual: {custom_reward}")
+            self.previous_itemcount = current_itemcount
+
+            # Recompensa por golpear a un enemigo
+            if current_hitcount > self.previous_hitcount:
+                hitcount_delta = current_hitcount - self.previous_hitcount
+                reward_gain = hitcount_delta * self.hit_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por golpe: {reward_gain}, Golpes hechos: {hitcount_delta}, Recompensa actual: {custom_reward}")
+            self.previous_hitcount = current_hitcount
+
+            # Recompensa fija por matar a un enemigo (KILLCOUNT)
+            if current_killcount > self.previous_killcount:
+                killcount_delta = current_killcount - self.previous_killcount
+                reward_gain = killcount_delta * self.kill_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por matar: {reward_gain}, Enemigos muertos: {killcount_delta}, Recompensa actual: {custom_reward}")
+            self.previous_killcount = current_killcount
+
+        return custom_reward
+
 def custom_epsilon_schedule(initial_epsilon, final_epsilon, decay_start_steps, decay_end_steps):
     """
     Custom epsilon schedule that starts decaying epsilon after decay_start_steps.
@@ -138,7 +195,7 @@ def custom_epsilon_schedule(initial_epsilon, final_epsilon, decay_start_steps, d
         else:       
             fraction = (step - decay_start_steps) / (decay_end_steps - decay_start_steps)
 
-            curvature = 1.5 # 1.0 for linear // >1.0 for slow decay // <1.0 for fast decay
+            curvature = 1.0 # 1.0 for linear // >1.0 for slow decay // <1.0 for fast decay
             adjusted_fraction = fraction ** curvature
 
             return max(final_epsilon, initial_epsilon - adjusted_fraction * (initial_epsilon - final_epsilon))
@@ -183,6 +240,7 @@ class EnvWrapper:
     def __call__(self, env):
         env = ObservationWrapper(env)
         #env = RewardShapingWrapper(env)
+        env = RewardShapingWrapperDeathMatch(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
@@ -253,7 +311,7 @@ if __name__ == "__main__":
                             gamma=params.get("gamma", 0.99),
                             exploration_initial_eps=initial_epsilon,
                             exploration_final_eps=final_epsilon,
-                            exploration_fraction=exploration_fraction,
+                            target_update_interval=10_000,
                             learning_starts=learning_starts,
                             verbose=1,
                             device='cuda'
