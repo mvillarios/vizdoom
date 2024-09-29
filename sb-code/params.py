@@ -76,7 +76,7 @@ DQN_PARAMS = {
     "VizdoomDeathmatch-v0": {
         "batch_size": 32,
         "learning_rate": 0.001,
-        "buffer_size": 500000,
+        "buffer_size": 100000,
         "gamma": 0.99,
         #"exploration_fraction": 0.4,
         "exploration_final_eps": 0.05,
