@@ -20,22 +20,22 @@ ENV_LIST = [
     #"VizdoomDefendCenter-v0", 
     #"VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
-    #"VizdoomMyWayHome-v0",
+    "VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
     #"VizdoomPredictPosition-v0",
     #"VizdoomTakeCover-v0",
-    "VizdoomDeathmatch-v0",
+    #"VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
     #"defend-center",
     #"defend-line",
     #"corridor",
-    #"my-way-home",
+    "my-way-home",
     #"health-gathering",
     #"predict-position",
     #"take-cover"
-    "deathmatch",
+    #"deathmatch",
 ]
 
 MODEL_LIST = [
@@ -44,15 +44,16 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(1e7)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
 N_ENVS = 1
-FRAME_SKIP = 4
+FRAME_SKIP = 10
 
 old_save = False
 old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
-num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
+#num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
+num = f"2-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
@@ -240,7 +241,7 @@ class EnvWrapper:
     def __call__(self, env):
         env = ObservationWrapper(env)
         #env = RewardShapingWrapper(env)
-        env = RewardShapingWrapperDeathMatch(env)
+        #env = RewardShapingWrapperDeathMatch(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
