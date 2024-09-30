@@ -51,7 +51,7 @@ MODEL_PATHS = {
 }
 
 RESOLUTION = (60, 45)
-FRAME_SKIP = 10
+FRAME_SKIP = 4
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
