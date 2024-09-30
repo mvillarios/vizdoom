@@ -110,6 +110,63 @@ class RewardShapingWrapper(RewardWrapper):
                 #print(f"Penalización por gastar balas: {penalty}, Balas gastadas: {ammo_delta}, Recompensa actual: {custom_reward}")
             self.previous_ammo = current_ammo
         return custom_reward
+    
+class RewardShapingWrapperDeathMatch(RewardWrapper):
+    def __init__(self, env, item_reward=0.1, hit_reward=0.1, kill_reward=1.0):
+        super(RewardShapingWrapperDeathMatch, self).__init__(env)
+        self.item_reward = item_reward
+        self.hit_reward = hit_reward
+        self.kill_reward = kill_reward
+        self.previous_itemcount = 0
+        self.previous_hitcount = 0
+        self.previous_killcount = 0
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        game_variables = self.env.unwrapped.game.get_state().game_variables
+
+        # Reiniciar las variables necesarias
+        self.previous_itemcount = game_variables[5]  # ITEMCOUNT
+        self.previous_hitcount = game_variables[6]   # HITCOUNT
+        self.previous_killcount = game_variables[0]  # KILLCOUNT
+
+        return obs, info
+
+    def reward(self, reward):
+        custom_reward = reward
+        game_state = self.env.unwrapped.game.get_state()
+
+        if game_state:
+            game_variables = game_state.game_variables
+            current_itemcount = game_variables[5]  # ITEMCOUNT
+            current_hitcount = game_variables[6]   # HITCOUNT
+            current_killcount = game_variables[0]  # KILLCOUNT
+
+            # Recompensa por recoger un ítem
+            if current_itemcount > self.previous_itemcount:
+                item_delta = current_itemcount - self.previous_itemcount
+                reward_gain = item_delta * self.item_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por ítem: {reward_gain}, Ítems recogidos: {item_delta}, Recompensa actual: {custom_reward}")
+            self.previous_itemcount = current_itemcount
+
+            # Recompensa por golpear a un enemigo
+            if current_hitcount > self.previous_hitcount:
+                hitcount_delta = current_hitcount - self.previous_hitcount
+                reward_gain = hitcount_delta * self.hit_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por golpe: {reward_gain}, Golpes hechos: {hitcount_delta}, Recompensa actual: {custom_reward}")
+            self.previous_hitcount = current_hitcount
+
+            # Recompensa fija por matar a un enemigo (KILLCOUNT)
+            if current_killcount > self.previous_killcount:
+                killcount_delta = current_killcount - self.previous_killcount
+                reward_gain = killcount_delta * self.kill_reward
+                custom_reward += reward_gain
+                #print(f"Recompensa por matar: {reward_gain}, Enemigos muertos: {killcount_delta}, Recompensa actual: {custom_reward}")
+            self.previous_killcount = current_killcount
+
+        return custom_reward
 
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
@@ -171,6 +228,7 @@ if __name__ == "__main__":
 
             def wrap_env(env):
                 env = ObservationWrapper(env)
+                env = RewardShapingWrapperDeathMatch(env)
                 return env
 
             # Crea el entorno vectorizado
