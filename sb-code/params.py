@@ -35,13 +35,13 @@ DQN_PARAMS = {
     "VizdoomMyWayHome-v0": {
         "batch_size": 32,
         "learning_rate": 0.001,
-        "buffer_size": 100000,
+        "buffer_size": 300000,
         "gamma": 0.99,
         #"exploration_fraction": 0.4,
         "exploration_final_eps": 0.05,
         "learning_starts": 10000,
         "decay_start_steps": 0,
-        "decay_end_steps": 0.1,
+        "decay_end_steps": 0.2,
     },
     "VizdoomHealthGathering-v0": {
         'batch_size': 64, 
@@ -84,7 +84,7 @@ DQN_PARAMS = {
         "exploration_final_eps": 0.05,
         "learning_starts": 10000,
         "decay_start_steps": 0,
-        "decay_end_steps": 0.1,
+        "decay_end_steps": 0.2,
     },
 }
 

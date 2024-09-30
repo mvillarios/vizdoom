@@ -53,7 +53,7 @@ old_dir_dqn = "trains/corridor/dqn-5"
 old_dir_ppo = "trains/corridor/ppo-7"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"2-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
+num = f"3-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
@@ -312,7 +312,7 @@ if __name__ == "__main__":
                             gamma=params.get("gamma", 0.99),
                             exploration_initial_eps=initial_epsilon,
                             exploration_final_eps=final_epsilon,
-                            target_update_interval=10_000,
+                            target_update_interval=1000,
                             learning_starts=learning_starts,
                             verbose=1,
                             device='cuda'
