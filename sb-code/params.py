@@ -84,7 +84,7 @@ DQN_PARAMS = {
         "exploration_final_eps": 0.05,
         "learning_starts": 10000,
         "decay_start_steps": 0,
-        "decay_end_steps": 0.2,
+        "decay_end_steps": 0.1,
     },
 }
 
