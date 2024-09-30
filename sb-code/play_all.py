@@ -18,22 +18,22 @@ ENV_LIST = [
     #"VizdoomDefendCenter-v0",
     #"VizdoomDefendLine-v0",
     #"VizdoomCorridor-v0",
-    "VizdoomMyWayHome-v0",
+    #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
     #"VizdoomPredictPosition-v0",
     #"VizdoomTakeCover-v0",
-    #"VizdoomDeathmatch-v0",
+    "VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
     #"defend-center",
     #"defend-line",
     #"corridor",
-    "my-way-home",
+    #"my-way-home",
     #"health-gathering",
     #"predict-position",
     #"take-cover"
-    #"deathmatch",
+    "deathmatch",
 ]
 
 MODEL_LIST = [
@@ -46,7 +46,7 @@ MODEL_LIST = [
 MODEL_PATHS = {
     #"dqn": {"model": "dqn_vizdoom", "num": "2-fs(10)-steps(1000000)", "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
     "ppo": {"model": "ppo_vizdoom", "num": 2, "subfolder": "saves"},
-    "dqn": {"model": "best_model", "num": "2-fs(10)-steps(1000000)", "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
+    "dqn": {"model": "best_model", "num": "3-btn(menos)-fs(4)-steps(10000000)", "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
     #"ppo": {"model": "best_model", "num": "2-btn(menos)-fs(7)-steps(1000000)", "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
 }
 
@@ -183,7 +183,7 @@ if __name__ == "__main__":
                 f.write("Episodio,Puntaje\n")  # Encabezado del archivo
 
                 # Ejecuta 50 episodios por cada mapa y modelo
-                for _ in range(5000):
+                for _ in range(2000):
                     obs = env.reset()
                     done = False
                     total_reward = 0
