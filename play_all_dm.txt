@@ -1,0 +1,59 @@
+== CURRENT SYSTEM INFO ==
+- OS: Linux-6.8.0-45-generic-x86_64-with-glibc2.35 # 45~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep 11 15:25:05 UTC 2
+- Python: 3.12.2
+- Stable-Baselines3: 2.3.2
+- PyTorch: 2.2.2
+- GPU Enabled: True
+- Numpy: 1.26.4
+- Cloudpickle: 3.0.0
+- Gymnasium: 0.29.1
+
+== SAVED MODEL SYSTEM INFO ==
+- OS: Linux-6.8.0-45-generic-x86_64-with-glibc2.35 # 45~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep 11 15:25:05 UTC 2
+- Python: 3.12.2
+- Stable-Baselines3: 2.3.2
+- PyTorch: 2.2.2
+- GPU Enabled: True
+- Numpy: 1.26.4
+- Cloudpickle: 3.0.0
+- Gymnasium: 0.29.1
+
+Traceback (most recent call last):
+  File "/home/miguelvilla/vizdoom/sb-code/play_all.py", line 225, in <module>
+    agent = DQN.load(MODEL_PATH, print_system_info=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/base_class.py", line 680, in load
+    data, params, pytorch_variables = load_from_zip_file(
+                                      ^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/save_util.py", line 451, in load_from_zip_file
+    th_object = th.load(file_content, map_location=device, weights_only=False)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 1026, in load
+    return _load(opened_zipfile,
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 1438, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 1408, in persistent_load
+    typed_storage = load_tensor(dtype, nbytes, key, _maybe_decode_ascii(location))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 1382, in load_tensor
+    wrap_storage=restore_location(storage, location),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 1311, in restore_location
+    return default_restore_location(storage, str(map_location))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 391, in default_restore_location
+    result = fn(storage, location)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/serialization.py", line 271, in _cuda_deserialize
+    return obj.cuda(device)
+           ^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/torch/_utils.py", line 115, in _cuda
+    untyped_storage = torch.UntypedStorage(
+                      ^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: out of memory
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
