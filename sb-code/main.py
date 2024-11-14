@@ -35,7 +35,7 @@ MAP_LIST = [
     #"health-gathering",
     #"predict-position",
     #"take-cover"
-    "deathmatch",
+    #"deathmatch",
 ]
 
 MODEL_LIST = [
