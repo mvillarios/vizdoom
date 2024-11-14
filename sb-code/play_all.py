@@ -44,9 +44,9 @@ MODEL_LIST = [
 
 # Diccionario de modelos específicos para cada algoritmo, incluyendo el número de modelo y la subcarpeta del modelo
 MODEL_PATHS = {
-    #"dqn": {"model": "dqn_vizdoom", "num": "2-fs(10)-steps(1000000)", "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
+    #"dqn": {"model": "dqn_vizdoom", "num": 6, "subfolder": "saves"},  # dqn usa "dqn_vizdoom" en la subcarpeta "saves"
     "ppo": {"model": "ppo_vizdoom", "num": 6, "subfolder": "saves"},
-    "dqn": {"model": "best_model", "num": 6, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
+    "dqn": {"model": "best_model", "num": 5, "subfolder": "models"},  # dqn usa "best_model" en la subcarpeta "models"
     #"ppo": {"model": "best_model", "num": "2-btn(menos)-fs(7)-steps(1000000)", "subfolder": "models"}   # ppo usa "best_model" en la subcarpeta "models"
 }
 
@@ -228,7 +228,7 @@ if __name__ == "__main__":
 
             def wrap_env(env):
                 env = ObservationWrapper(env)
-                env = RewardShapingWrapperDeathMatch(env)
+                #env = RewardShapingWrapperDeathMatch(env)
                 return env
 
             # Crea el entorno vectorizado

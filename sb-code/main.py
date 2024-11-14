@@ -19,18 +19,18 @@ from params import DQN_PARAMS, PPO_PARAMS
 ENV_LIST = [
     #"VizdoomDefendCenter-v0", 
     #"VizdoomDefendLine-v0",
-    #"VizdoomCorridor-v0",
+    "VizdoomCorridor-v0",
     #"VizdoomMyWayHome-v0",
     #"VizdoomHealthGathering-v0"
     #"VizdoomPredictPosition-v0",
     #"VizdoomTakeCover-v0",
-    "VizdoomDeathmatch-v0",
+    #"VizdoomDeathmatch-v0",
 ]
 
 MAP_LIST = [
     #"defend-center",
     #"defend-line",
-    #"corridor",
+    "corridor",
     #"my-way-home",
     #"health-gathering",
     #"predict-position",
@@ -39,24 +39,25 @@ MAP_LIST = [
 ]
 
 MODEL_LIST = [
-    "dqn",
-    #"ppo"
+    #"dqn",
+    "ppo"
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(3e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(5e5)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
 old_save = False
-old_dir_dqn = "trains/corridor/dqn-5"
+old_dir_dqn = "trains/corridor/dqn-1"
 old_dir_ppo = "trains/corridor/ppo-7"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
+#num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
+num = f"1-last"
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
+    def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
@@ -128,16 +129,19 @@ class RewardShapingWrapperDeathMatch(RewardWrapper):
 
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
-        game_variables = self.env.unwrapped.game.get_state().game_variables
+        game_state = self.env.unwrapped.game.get_state()
 
-        # Reiniciar las variables necesarias
-        self.previous_itemcount = game_variables[5]  # ITEMCOUNT
-        self.previous_hitcount = game_variables[6]   # HITCOUNT
-        self.previous_killcount = game_variables[0]  # KILLCOUNT
+        if game_state:
+            game_variables = game_state.game_variables
+            self.previous_killcount = game_variables[0]  # KILLCOUNT
+            self.previous_itemcount = game_variables[5]  # ITEMCOUNT
+            self.previous_hitcount = game_variables[6]   # HITCOUNT
 
+        print(f"Reset variables - Items: {self.previous_itemcount}, Hits: {self.previous_hitcount}, Kills: {self.previous_killcount}")
         return obs, info
 
     def reward(self, reward):
+        print(f"Reward original: {reward}")
         custom_reward = reward
         game_state = self.env.unwrapped.game.get_state()
 
@@ -152,7 +156,7 @@ class RewardShapingWrapperDeathMatch(RewardWrapper):
                 item_delta = current_itemcount - self.previous_itemcount
                 reward_gain = item_delta * self.item_reward
                 custom_reward += reward_gain
-                #print(f"Recompensa por ítem: {reward_gain}, Ítems recogidos: {item_delta}, Recompensa actual: {custom_reward}")
+                print(f"Recompensa por ítem: {reward_gain}, Ítems recogidos: {item_delta}, Recompensa actual: {custom_reward}")
             self.previous_itemcount = current_itemcount
 
             # Recompensa por golpear a un enemigo
@@ -160,7 +164,7 @@ class RewardShapingWrapperDeathMatch(RewardWrapper):
                 hitcount_delta = current_hitcount - self.previous_hitcount
                 reward_gain = hitcount_delta * self.hit_reward
                 custom_reward += reward_gain
-                #print(f"Recompensa por golpe: {reward_gain}, Golpes hechos: {hitcount_delta}, Recompensa actual: {custom_reward}")
+                print(f"Recompensa por golpe: {reward_gain}, Golpes hechos: {hitcount_delta}, Recompensa actual: {custom_reward}")
             self.previous_hitcount = current_hitcount
 
             # Recompensa fija por matar a un enemigo (KILLCOUNT)
@@ -168,9 +172,10 @@ class RewardShapingWrapperDeathMatch(RewardWrapper):
                 killcount_delta = current_killcount - self.previous_killcount
                 reward_gain = killcount_delta * self.kill_reward
                 custom_reward += reward_gain
-                #print(f"Recompensa por matar: {reward_gain}, Enemigos muertos: {killcount_delta}, Recompensa actual: {custom_reward}")
+                print(f"Recompensa por matar: {reward_gain}, Enemigos muertos: {killcount_delta}, Recompensa actual: {custom_reward}")
             self.previous_killcount = current_killcount
 
+        print(f"Reward custom: {custom_reward}")
         return custom_reward
 
 def custom_epsilon_schedule(initial_epsilon, final_epsilon, decay_start_steps, decay_end_steps):
@@ -240,8 +245,8 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        #env = RewardShapingWrapper(env)
-        env = RewardShapingWrapperDeathMatch(env)
+        env = RewardShapingWrapper(env)
+        #env = RewardShapingWrapperDeathMatch(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         env = Monitor(env, self.log_dir,)
         return env
@@ -302,6 +307,15 @@ if __name__ == "__main__":
 
                     if old_save:
                         agent = DQN.load(f"{old_dir_dqn}/saves/dqn_vizdoom", train_env)
+                        agent.load_replay_buffer(f"{old_dir_dqn}/saves/replay_buffer")
+
+                        agent.batch_size = params.get("batch_size", 64)
+                        agent.learning_rate = params.get("learning_rate", 0.001)
+                        agent.buffer_size = params.get("buffer_size", 50000)
+                        agent.gamma = params.get("gamma", 0.99)
+                        agent.exploration_initial_eps = initial_epsilon
+                        agent.exploration_final_eps = final_epsilon
+                        agent.target_update_interval = 100
                     else:
                         agent = DQN(
                             "CnnPolicy",
@@ -321,9 +335,10 @@ if __name__ == "__main__":
                     agent.exploration_schedule = epsilon_schedule_fn
 
                     epsilon_logger = EpsilonLogger(LOG_DIR)
-                    
+
                     agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
                     agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
+                    agent.save_replay_buffer(f"{LOG_DIR}/saves/replay_buffer")
 
                     log_file.write(f"Parameters: {params}\n")
 

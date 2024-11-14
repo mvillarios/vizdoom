@@ -11,17 +11,17 @@ from gymnasium import RewardWrapper
 
 import vizdoom.gymnasium_wrapper
 
-ENV = "VizdoomDeathmatch-v0"
+ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "dqn"
-num = "2-btn(menos)-fs(7)-steps(1000000)"
-map = "deathmatch"
+num = "1-old_dir(trains/corridor/dqn-1)-dificultad(1)"
+map = "corridor"
 MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=200, hit_taken_penalty=-10, ammo_penalty=-5):
+    def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
@@ -100,11 +100,11 @@ if __name__ == "__main__":
 
     def wrap_env(env):
         env = ObservationWrapper(env)
-        #env = RewardShapingWrapper(env)
+        env = RewardShapingWrapper(env)
         #env = gym.wrappers.TransformReward(env, lambda r: r * 0.001)
         return env
 
-    env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 7, "render_mode": "human"})
+    env = make_vec_env(ENV, wrapper_class=wrap_env, env_kwargs={"frame_skip": 4, "render_mode": "human"})
 
     # Load the trained agent
     if model == "dqn":

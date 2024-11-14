@@ -1,0 +1,45 @@
+2024-11-11 03:35:04.769469: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-11-11 03:35:07.977787: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-11-11 03:35:14.174715: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/vizdoom/gymnasium_wrapper/base_gymnasium_env.py:84: UserWarning: Detected screen format CRCGCB. Only RGB24 and GRAY8 are supported in the Gymnasium wrapper. Forcing RGB24.
+  warnings.warn(
+Using cuda device
+Traceback (most recent call last):
+  File "/mnt/c/Proyecto/sb-code/main.py", line 339, in <module>
+    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/dqn/dqn.py", line 267, in learn
+    return super().learn(
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 328, in learn
+    rollout = self.collect_rollouts(
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/off_policy_algorithm.py", line 568, in collect_rollouts
+    if not callback.on_step():
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/callbacks.py", line 114, in on_step
+    return self._on_step()
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/callbacks.py", line 219, in _on_step
+    continue_training = callback.on_step() and continue_training
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/callbacks.py", line 114, in on_step
+    return self._on_step()
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/callbacks.py", line 460, in _on_step
+    episode_rewards, episode_lengths = evaluate_policy(
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/evaluation.py", line 94, in evaluate_policy
+    new_observations, rewards, dones, infos = env.step(actions)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 206, in step
+    return self.step_wait()
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/vec_env/vec_transpose.py", line 97, in step_wait
+    observations, rewards, dones, infos = self.venv.step_wait()
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 58, in step_wait
+    obs, self.buf_rews[env_idx], terminated, truncated, self.buf_infos[env_idx] = self.envs[env_idx].step(
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/monitor.py", line 94, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/gymnasium/core.py", line 522, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/stable_baselines3/common/monitor.py", line 94, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/gymnasium/wrappers/order_enforcing.py", line 56, in step
+    return self.env.step(action)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/gymnasium/wrappers/env_checker.py", line 51, in step
+    return self.env.step(action)
+  File "/mnt/c/Proyecto/.venv/lib/python3.10/site-packages/vizdoom/gymnasium_wrapper/base_gymnasium_env.py", line 134, in step
+    reward = self.game.make_action(env_action, self.frame_skip)
+vizdoom.vizdoom.SignalException: Signal SIGINT received. ViZDoom instance has been closed.
