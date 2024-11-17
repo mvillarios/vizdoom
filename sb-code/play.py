@@ -14,14 +14,14 @@ import vizdoom.gymnasium_wrapper
 ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
-model = "dqn"
-num = "1-old_dir(trains/corridor/dqn-1)-dificultad(1)"
+model = "ppo"
+num = "1-last"
 map = "corridor"
 MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=300, hit_taken_penalty=-50, ammo_penalty=-20):
+    def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
@@ -44,6 +44,7 @@ class RewardShapingWrapper(RewardWrapper):
         return obs, info
 
     def reward(self, reward):
+        #print(f"Reward original: {reward}")
         custom_reward = reward
         game_state = self.env.unwrapped.game.get_state()
 
@@ -76,6 +77,8 @@ class RewardShapingWrapper(RewardWrapper):
                 custom_reward += penalty
                 #print(f"Penalización por gastar balas: {penalty}, Balas gastadas: {ammo_delta}, Recompensa actual: {custom_reward}")
             self.previous_ammo = current_ammo
+
+        #print(f"Reward custom: {custom_reward}")
         return custom_reward
 
 class ObservationWrapper(gym.ObservationWrapper):

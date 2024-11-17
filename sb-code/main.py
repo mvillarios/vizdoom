@@ -54,7 +54,7 @@ old_dir_ppo = "trains/corridor/ppo-7"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"1-last"
+num = f"2-last"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
@@ -208,6 +208,22 @@ def custom_epsilon_schedule(initial_epsilon, final_epsilon, decay_start_steps, d
     
     return schedule
 
+class EarlyStopCallback(BaseCallback):
+    def __init__(self, stop_percentage, total_timesteps, verbose=0):
+        super(EarlyStopCallback, self).__init__(verbose)
+        # Calcula el número de timesteps en el que detenerse
+        self.stop_timesteps = int(stop_percentage * total_timesteps)
+        self.verbose = verbose
+
+    def _on_step(self) -> bool:
+        # Verifica si se ha alcanzado el límite de timesteps
+        if self.num_timesteps >= self.stop_timesteps:
+            if self.verbose:
+                print(f"Deteniendo el entrenamiento en el {self.stop_timesteps} timesteps ("
+                      f"{self.stop_timesteps / self.model._total_timesteps:.1%} del total).")
+            return False  # Return False detiene el entrenamiento
+        return True
+
 class ObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, shape=RESOLUTION):
         super().__init__(env)
@@ -258,6 +274,9 @@ if __name__ == "__main__":
     }
 
     start_index = 0
+
+    stop_percentage = 0.20  # Ejemplo de detenerse al 20
+    early_stop_callback = EarlyStopCallback(stop_percentage=stop_percentage, total_timesteps=TRAINING_TIMESTEPS, verbose=1)
 
     for model in MODEL_LIST:
         for map_name, env_name in zip(MAP_LIST[start_index:], ENV_LIST[start_index:]):
@@ -336,7 +355,7 @@ if __name__ == "__main__":
 
                     epsilon_logger = EpsilonLogger(LOG_DIR)
 
-                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger, early_stop_callback])
                     agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
                     agent.save_replay_buffer(f"{LOG_DIR}/saves/replay_buffer")
 
@@ -347,6 +366,26 @@ if __name__ == "__main__":
 
                     if old_save:
                         agent = PPO.load(f"{old_dir_ppo}/models/best_model", train_env)
+
+                        temp_agent = PPO(
+                            "CnnPolicy",
+                            train_env,
+                            n_steps=params.get("n_steps", 2048),
+                            batch_size=params.get("batch_size", 64),
+                            learning_rate=params.get("learning_rate", 3e-4),
+                            gamma=params.get("gamma", 0.99),
+                            gae_lambda=params.get("gae_lambda", 0.95),
+                            clip_range=params.get("clip_range", 0.2),
+                            ent_coef=params.get("ent_coef", 0.0),
+                            vf_coef=params.get("vf_coef", 0.5),
+                            clip_range_vf=params.get("clip_range_vf", None),
+                            target_kl=params.get("target_kl", 0.01),
+                            verbose=1,
+                            device='cuda'
+                        )
+
+                        last_params = temp_agent.get_parameters()
+                        agent.set_parameters(last_params)
                     else:
                         agent = PPO(
                             "CnnPolicy",
@@ -364,7 +403,7 @@ if __name__ == "__main__":
                             verbose=1,
                             device='cuda'
                         )
-                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=evaluation_callback)
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback])
                     agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
 
                     log_file.write(f"Parameters: {params}\n")
