@@ -1,0 +1,89 @@
+/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/vizdoom/gymnasium_wrapper/base_gymnasium_env.py:84: UserWarning: Detected screen format CRCGCB. Only RGB24 and GRAY8 are supported in the Gymnasium wrapper. Forcing RGB24.
+  warnings.warn(
+Using cuda device
+Eval num_timesteps=500, episode_reward=-490.77 +/- 88.08
+Episode length: 22.50 +/- 6.75
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 22.5     |
+|    mean_reward     | -491     |
+| time/              |          |
+|    total_timesteps | 500      |
+---------------------------------
+New best mean reward!
+Eval num_timesteps=1000, episode_reward=-513.04 +/- 77.78
+Episode length: 24.36 +/- 7.24
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 24.4     |
+|    mean_reward     | -513     |
+| time/              |          |
+|    total_timesteps | 1000     |
+---------------------------------
+Eval num_timesteps=1500, episode_reward=-518.32 +/- 77.99
+Episode length: 24.82 +/- 7.15
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 24.8     |
+|    mean_reward     | -518     |
+| time/              |          |
+|    total_timesteps | 1500     |
+---------------------------------
+Traceback (most recent call last):
+  File "/home/miguelvilla/vizdoom/sb-code/main.py", line 406, in <module>
+    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback])
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/ppo/ppo.py", line 315, in learn
+    return super().learn(
+           ^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 300, in learn
+    continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/on_policy_algorithm.py", line 201, in collect_rollouts
+    if not callback.on_step():
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/callbacks.py", line 114, in on_step
+    return self._on_step()
+           ^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/callbacks.py", line 219, in _on_step
+    continue_training = callback.on_step() and continue_training
+                        ^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/callbacks.py", line 114, in on_step
+    return self._on_step()
+           ^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/callbacks.py", line 460, in _on_step
+    episode_rewards, episode_lengths = evaluate_policy(
+                                       ^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/evaluation.py", line 94, in evaluate_policy
+    new_observations, rewards, dones, infos = env.step(actions)
+                                              ^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/vec_env/base_vec_env.py", line 206, in step
+    return self.step_wait()
+           ^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/vec_env/vec_transpose.py", line 97, in step_wait
+    observations, rewards, dones, infos = self.venv.step_wait()
+                                          ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/vec_env/dummy_vec_env.py", line 58, in step_wait
+    obs, self.buf_rews[env_idx], terminated, truncated, self.buf_infos[env_idx] = self.envs[env_idx].step(
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/monitor.py", line 94, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+                                                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/gymnasium/core.py", line 555, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+                                                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/gymnasium/core.py", line 522, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+                                                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/stable_baselines3/common/monitor.py", line 94, in step
+    observation, reward, terminated, truncated, info = self.env.step(action)
+                                                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/gymnasium/wrappers/order_enforcing.py", line 56, in step
+    return self.env.step(action)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/gymnasium/wrappers/env_checker.py", line 51, in step
+    return self.env.step(action)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/miguelvilla/anaconda3/envs/doom/lib/python3.12/site-packages/vizdoom/gymnasium_wrapper/base_gymnasium_env.py", line 134, in step
+    reward = self.game.make_action(env_action, self.frame_skip)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+vizdoom.vizdoom.SignalException: Signal SIGTERM received. ViZDoom instance has been closed.
