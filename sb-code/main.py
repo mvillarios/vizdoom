@@ -44,7 +44,7 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(5e5)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
@@ -54,7 +54,7 @@ old_dir_ppo = "trains/corridor/ppo-1-last"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"ppo-1-1-last-dif(3)"
+num = f"ppo-stop-1"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
     start_index = 0
 
-    stop_percentage = 0.20  # Ejemplo de detenerse al 20
+    stop_percentage = 0.4  # Ejemplo de detenerse al 40
     early_stop_callback = EarlyStopCallback(stop_percentage=stop_percentage, total_timesteps=TRAINING_TIMESTEPS, verbose=1)
 
     for model in MODEL_LIST:
@@ -403,7 +403,7 @@ if __name__ == "__main__":
                             verbose=1,
                             device='cuda'
                         )
-                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback])
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback, early_stop_callback])
                     agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
 
                     log_file.write(f"Parameters: {params}\n")
