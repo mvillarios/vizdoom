@@ -44,17 +44,17 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(5e5)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-old_save = True
+old_save = False
 old_dir_dqn = "trains/corridor/dqn-1"
 old_dir_ppo = "trains/corridor/ppo-1-last"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"ppo-2-last-2"
+num = f"ppo-1-1-last-dif(3)"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
