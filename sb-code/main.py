@@ -48,13 +48,13 @@ TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-old_save = False
+old_save = True
 old_dir_dqn = "trains/corridor/dqn-1"
-old_dir_ppo = "trains/corridor/ppo-1-last"
+old_dir_ppo = "trains/corridor/ppo-ppo-stop-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"ppo-stop-1"
+num = f"ppo-stop-2"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
     start_index = 0
 
-    stop_percentage = 0.4  # Ejemplo de detenerse al 40
+    stop_percentage = 0.6  # Ejemplo de detenerse al 40
     early_stop_callback = EarlyStopCallback(stop_percentage=stop_percentage, total_timesteps=TRAINING_TIMESTEPS, verbose=1)
 
     for model in MODEL_LIST:
