@@ -15,10 +15,10 @@ ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "1-last"
+num = "stop-2-1"
 map = "corridor"
-MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
-#MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
+#MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
+MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):

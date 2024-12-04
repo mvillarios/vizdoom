@@ -44,17 +44,17 @@ MODEL_LIST = [
 ]
 
 RESOLUTION = (60, 45)
-TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
+TRAINING_TIMESTEPS = int(5e5)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
 old_save = True
 old_dir_dqn = "trains/corridor/dqn-1"
-old_dir_ppo = "trains/corridor/ppo-ppo-stop-1"
+old_dir_ppo = "trains/corridor/ppo-stop-2-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"ppo-stop-2"
+num = f"stop-2-2"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
     start_index = 0
 
-    stop_percentage = 0.6  # Ejemplo de detenerse al 40
+    stop_percentage = 0.4  # Ejemplo de detenerse al 40
     early_stop_callback = EarlyStopCallback(stop_percentage=stop_percentage, total_timesteps=TRAINING_TIMESTEPS, verbose=1)
 
     for model in MODEL_LIST:
@@ -325,16 +325,22 @@ if __name__ == "__main__":
                     )
 
                     if old_save:
-                        agent = DQN.load(f"{old_dir_dqn}/saves/dqn_vizdoom", train_env)
+                        agent = DQN(
+                            "CnnPolicy",
+                            train_env,
+                            batch_size=params.get("batch_size", 64),
+                            learning_rate=params.get("learning_rate", 0.0001),
+                            buffer_size=params.get("buffer_size", 50000),
+                            gamma=params.get("gamma", 0.99),
+                            exploration_initial_eps=initial_epsilon,
+                            exploration_final_eps=final_epsilon,
+                            target_update_interval=100,
+                            learning_starts=learning_starts,
+                            verbose=1,
+                            device='cuda'
+                        )
                         agent.load_replay_buffer(f"{old_dir_dqn}/saves/replay_buffer")
-
-                        agent.batch_size = params.get("batch_size", 64)
-                        agent.learning_rate = params.get("learning_rate", 0.001)
-                        agent.buffer_size = params.get("buffer_size", 50000)
-                        agent.gamma = params.get("gamma", 0.99)
-                        agent.exploration_initial_eps = initial_epsilon
-                        agent.exploration_final_eps = final_epsilon
-                        agent.target_update_interval = 100
+                        agent.policy.load(f"{old_dir_dqn}/policy/pesos.zip")
                     else:
                         agent = DQN(
                             "CnnPolicy",
@@ -358,6 +364,8 @@ if __name__ == "__main__":
                     agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger, early_stop_callback])
                     agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
                     agent.save_replay_buffer(f"{LOG_DIR}/saves/replay_buffer")
+                    if not os.path.exists(f"{LOG_DIR}/policy"): os.makedirs(f"{LOG_DIR}/policy")
+                    agent.policy.save(f"{LOG_DIR}/policy/pesos.zip")
 
                     log_file.write(f"Parameters: {params}\n")
 
@@ -365,9 +373,7 @@ if __name__ == "__main__":
                     params = PPO_PARAMS.get(env_name, {})
 
                     if old_save:
-                        agent = PPO.load(f"{old_dir_ppo}/models/best_model", train_env)
-
-                        temp_agent = PPO(
+                        agent = PPO(
                             "CnnPolicy",
                             train_env,
                             n_steps=params.get("n_steps", 2048),
@@ -383,9 +389,7 @@ if __name__ == "__main__":
                             verbose=1,
                             device='cuda'
                         )
-
-                        last_params = temp_agent.get_parameters()
-                        agent.set_parameters(last_params)
+                        agent.policy.load(f"{old_dir_ppo}/policy/pesos.zip")
                     else:
                         agent = PPO(
                             "CnnPolicy",
@@ -403,8 +407,10 @@ if __name__ == "__main__":
                             verbose=1,
                             device='cuda'
                         )
-                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback, early_stop_callback])
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="ppo", callback=[evaluation_callback])
                     agent.save(f"{LOG_DIR}/saves/ppo_vizdoom")
+                    if not os.path.exists(f"{LOG_DIR}/policy"): os.makedirs(f"{LOG_DIR}/policy")
+                    agent.policy.save(f"{LOG_DIR}/policy/pesos.zip")
 
                     log_file.write(f"Parameters: {params}\n")
 
