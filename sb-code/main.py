@@ -50,7 +50,7 @@ FRAME_SKIP = 4
 
 old_save = True
 old_dir_dqn = "trains/corridor/dqn-1"
-old_dir_ppo = "trains/corridor/ppo-stop-3-1"
+old_dir_ppo = "trains/corridor/ppo-stop-4-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
@@ -261,7 +261,7 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        env = gym.wrappers.TransformReward(env, lambda r: r * 0.1)
+        #env = gym.wrappers.TransformReward(env, lambda r: r * 0.1)
         env = RewardShapingWrapper(env)
         #env = RewardShapingWrapperDeathMatch(env)
         env = Monitor(env, self.log_dir,)

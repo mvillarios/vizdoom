@@ -15,7 +15,7 @@ ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "stop-3-1"
+num = "stop-3-2"
 map = "corridor"
 MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
