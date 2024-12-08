@@ -50,11 +50,11 @@ FRAME_SKIP = 4
 
 old_save = True
 old_dir_dqn = "trains/corridor/dqn-1"
-old_dir_ppo = "trains/defend-center/ppo-1"
+old_dir_ppo = "trains/corridor/ppo-stop-3-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"stop-4-1"
+num = f"stop-3-2"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
@@ -90,13 +90,13 @@ class RewardShapingWrapper(RewardWrapper):
             current_hitcount = game_variables[2]  # HITCOUNT
             current_ammo = game_variables[3]  # SELECTED_WEAPON_AMMO
 
-            # # Penalización por recibir daño
-            # if current_damage_taken > self.previous_damage_taken:
-            #     damage_taken_delta = current_damage_taken - self.previous_damage_taken
-            #     penalty = damage_taken_delta * self.hit_taken_penalty
-            #     custom_reward += penalty
-            #     #print(f"Penalización por recibir daño: {penalty}, Daño recibido: {damage_taken_delta}, Recompensa actual: {custom_reward}")
-            # self.previous_damage_taken = current_damage_taken
+            # Penalización por recibir daño
+            if current_damage_taken > self.previous_damage_taken:
+                damage_taken_delta = current_damage_taken - self.previous_damage_taken
+                penalty = damage_taken_delta * self.hit_taken_penalty
+                custom_reward += penalty
+                #print(f"Penalización por recibir daño: {penalty}, Daño recibido: {damage_taken_delta}, Recompensa actual: {custom_reward}")
+            self.previous_damage_taken = current_damage_taken
 
             # Recompensa por hacer daño (hitcount)
             if current_hitcount > self.previous_hitcount:
