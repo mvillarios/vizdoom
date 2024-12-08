@@ -48,13 +48,13 @@ TRAINING_TIMESTEPS = int(1e6)  # 600k 200k 1000k
 N_ENVS = 1
 FRAME_SKIP = 4
 
-old_save = False
+old_save = True
 old_dir_dqn = "trains/corridor/dqn-1"
-old_dir_ppo = "trains/corridor/ppo-stop-2-1"
+old_dir_ppo = "trains/defend-center/ppo-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"stop-3-1"
+num = f"stop-4-1"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):

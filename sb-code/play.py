@@ -15,7 +15,7 @@ ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
 model = "ppo"
-num = "stop-2-1"
+num = "stop-3-1"
 map = "corridor"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
@@ -55,12 +55,12 @@ class RewardShapingWrapper(RewardWrapper):
             current_ammo = game_variables[3]  # SELECTED_WEAPON_AMMO
 
             # Penalización por recibir daño
-            if current_damage_taken > self.previous_damage_taken:
-                damage_taken_delta = current_damage_taken - self.previous_damage_taken
-                penalty = damage_taken_delta * self.hit_taken_penalty
-                custom_reward += penalty
-                #print(f"Penalización por recibir daño: {penalty}, Daño recibido: {damage_taken_delta}, Recompensa actual: {custom_reward}")
-            self.previous_damage_taken = current_damage_taken
+            # if current_damage_taken > self.previous_damage_taken:
+            #     damage_taken_delta = current_damage_taken - self.previous_damage_taken
+            #     penalty = damage_taken_delta * self.hit_taken_penalty
+            #     custom_reward += penalty
+            #     #print(f"Penalización por recibir daño: {penalty}, Daño recibido: {damage_taken_delta}, Recompensa actual: {custom_reward}")
+            # self.previous_damage_taken = current_damage_taken
 
             # Recompensa por hacer daño (hitcount)
             if current_hitcount > self.previous_hitcount:
