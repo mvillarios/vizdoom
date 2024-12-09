@@ -54,10 +54,10 @@ old_dir_ppo = "trains/corridor/ppo-stop-4-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"stop-3-2"
+num = f"stop-3-3"
 
 class RewardShapingWrapper(RewardWrapper):
-    def __init__(self, env, damage_reward=100, hit_taken_penalty=-5, ammo_penalty=-1):
+    def __init__(self, env, damage_reward=100, hit_taken_penalty=-3, ammo_penalty=-1):
         super(RewardShapingWrapper, self).__init__(env)
         self.damage_reward = damage_reward
         self.hit_taken_penalty = hit_taken_penalty
@@ -261,7 +261,7 @@ class EnvWrapper:
 
     def __call__(self, env):
         env = ObservationWrapper(env)
-        #env = gym.wrappers.TransformReward(env, lambda r: r * 0.1)
+        env = gym.wrappers.TransformReward(env, lambda r: r * 0.1)
         env = RewardShapingWrapper(env)
         #env = RewardShapingWrapperDeathMatch(env)
         env = Monitor(env, self.log_dir,)
