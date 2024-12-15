@@ -22,10 +22,10 @@ DQN_PARAMS = {
         "decay_end_steps": 1.5e5
     },
     "VizdoomCorridor-v0": {
-        "batch_size": 64,
-        "learning_rate": 0.001,
-        "buffer_size": 30000,
-        "gamma": 0.998,
+        "batch_size": 128,
+        "learning_rate": 0.0005,
+        "buffer_size": 100000,
+        "gamma": 0.99,
         #"exploration_fraction": 0.4,
         "exploration_final_eps": 0.01,
         "learning_starts": 10000,
