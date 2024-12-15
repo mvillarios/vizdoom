@@ -361,7 +361,7 @@ if __name__ == "__main__":
 
                     epsilon_logger = EpsilonLogger(LOG_DIR)
 
-                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger, early_stop_callback])
+                    agent.learn(total_timesteps=TRAINING_TIMESTEPS, tb_log_name="dqn", callback=[evaluation_callback, epsilon_logger])
                     agent.save(f"{LOG_DIR}/saves/dqn_vizdoom")
                     agent.save_replay_buffer(f"{LOG_DIR}/saves/replay_buffer")
                     if not os.path.exists(f"{LOG_DIR}/policy"): os.makedirs(f"{LOG_DIR}/policy")
