@@ -24,7 +24,7 @@ DQN_PARAMS = {
     "VizdoomCorridor-v0": {
         "batch_size": 128,
         "learning_rate": 0.0005,
-        "buffer_size": 100000,
+        "buffer_size": 50000,
         "gamma": 0.99,
         #"exploration_fraction": 0.4,
         "exploration_final_eps": 0.01,

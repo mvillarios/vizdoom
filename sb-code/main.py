@@ -54,7 +54,7 @@ old_dir_ppo = "trains/corridor/ppo-stop-4-1"
 
 #num = f"2-btn(menos)-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
 #num = f"4-fs({FRAME_SKIP})-steps({TRAINING_TIMESTEPS})"
-num = f"stop-1"
+num = f"stop-2"
 
 class RewardShapingWrapper(RewardWrapper):
     def __init__(self, env, damage_reward=100, hit_taken_penalty=-3, ammo_penalty=-1):
