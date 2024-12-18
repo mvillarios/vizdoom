@@ -1,2 +1,5 @@
 ViZDoom/
 .venv
+trains/corridor/dqn-stop-2-1/saves/replay_buffer.pkl
+trains/corridor/dqn-stop-2/saves/replay_buffer.pkl
+trains/corridor/dqn-stop-2/saves/replay_buffer.pkl

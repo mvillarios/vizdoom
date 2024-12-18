@@ -1,0 +1,4 @@
+Parameters: {'batch_size': 128, 'learning_rate': 0.0005, 'buffer_size': 50000, 'gamma': 0.99, 'exploration_final_eps': 0.01, 'learning_starts': 10000, 'decay_start_steps': 0.2, 'decay_end_steps': 0.7}
+Training steps: 1000000
+Frame skip: 4
+Model: dqn-stop-2-1
