@@ -14,8 +14,8 @@ import vizdoom.gymnasium_wrapper
 ENV = "VizdoomCorridor-v0"
 RESOLUTION = (60, 45)
 
-model = "dqn"
-num = "stop-2-1"
+model = "ppo"
+num = "stop-3-3"
 map = "corridor"
 #MODEL_PATH = f"trains/{map}/{model}-{num}/saves/{model}_vizdoom"
 MODEL_PATH = f"trains/{map}/{model}-{num}/models/best_model"
